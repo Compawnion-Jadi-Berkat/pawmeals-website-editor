@@ -5,6 +5,7 @@ import { Star, ShoppingCart } from "lucide-react";
 import { formatPrice } from "@/lib/shopify";
 import type { Locale } from "@/lib/i18n/config";
 import type { ShopifyProduct } from "@/types/shopify";
+import { PLACEHOLDER_IMAGES } from "@/lib/placeholder-images";
 
 interface ProductsGridProps {
   locale: Locale;
@@ -12,21 +13,28 @@ interface ProductsGridProps {
   sort?: string;
 }
 
+// Cycle through the 3 product images for 12 SKUs
+const PRODUCT_IMAGES = [
+  PLACEHOLDER_IMAGES.productChicken,
+  PLACEHOLDER_IMAGES.productBeef,
+  PLACEHOLDER_IMAGES.productFish,
+];
+
 // 12 SKU placeholder products matching the brand brief
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PLACEHOLDER_PRODUCTS = [
-  { id: "1", title: "Pawmeals Daily Wellness", handle: "daily-wellness", description: "Balanced daily nutrition for adult dogs", priceRange: { minVariantPrice: { amount: "75000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "wellness"], variants: { edges: [{ node: { id: "v1", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "2", title: "Pawmeals Joint Care", handle: "joint-care", description: "Glucosamine & chondroitin for joint health", priceRange: { minVariantPrice: { amount: "85000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "joint"], variants: { edges: [{ node: { id: "v2", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "3", title: "Pawmeals Weight Management", handle: "weight-management", description: "Low-calorie formula for healthy weight", priceRange: { minVariantPrice: { amount: "80000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "weight"], variants: { edges: [{ node: { id: "v3", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "4", title: "Pawmeals Puppy Growth", handle: "puppy-growth", description: "DHA & calcium for growing puppies", priceRange: { minVariantPrice: { amount: "78000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "puppy"], variants: { edges: [{ node: { id: "v4", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "5", title: "Pawmeals Senior Vitality", handle: "senior-vitality", description: "Gentle formula for senior dogs 7+", priceRange: { minVariantPrice: { amount: "82000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "senior"], variants: { edges: [{ node: { id: "v5", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "6", title: "Pawmeals Sensitive Digestion", handle: "sensitive-digestion", description: "Easily digestible for sensitive stomachs", priceRange: { minVariantPrice: { amount: "83000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "sensitive"], variants: { edges: [{ node: { id: "v6", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "7", title: "Pawmeals Skin & Coat", handle: "skin-coat", description: "Omega-3 & 6 for healthy skin and shiny coat", priceRange: { minVariantPrice: { amount: "87000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "skin"], variants: { edges: [{ node: { id: "v7", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "8", title: "Pawmeals High Energy", handle: "high-energy", description: "High-protein for active and working dogs", priceRange: { minVariantPrice: { amount: "90000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "active"], variants: { edges: [{ node: { id: "v8", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "9", title: "Pawmeals Cat Classic", handle: "cat-classic", description: "Premium cooked food for adult cats", priceRange: { minVariantPrice: { amount: "72000", currencyCode: "IDR" } }, featuredImage: null, tags: ["cat", "adult"], variants: { edges: [{ node: { id: "v9", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "10", title: "Pawmeals Cat Hairball", handle: "cat-hairball", description: "High-fiber formula to reduce hairballs", priceRange: { minVariantPrice: { amount: "76000", currencyCode: "IDR" } }, featuredImage: null, tags: ["cat", "hairball"], variants: { edges: [{ node: { id: "v10", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "11", title: "Pawmeals Cat Kitten", handle: "cat-kitten", description: "DHA-rich formula for growing kittens", priceRange: { minVariantPrice: { amount: "74000", currencyCode: "IDR" } }, featuredImage: null, tags: ["cat", "kitten"], variants: { edges: [{ node: { id: "v11", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "12", title: "Pawmeals Cat Senior", handle: "cat-senior", description: "Gentle nutrition for senior cats 7+", priceRange: { minVariantPrice: { amount: "78000", currencyCode: "IDR" } }, featuredImage: null, tags: ["cat", "senior"], variants: { edges: [{ node: { id: "v12", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "1", title: "Pawmeals Daily Wellness", handle: "daily-wellness", description: "Balanced daily nutrition for adult dogs", priceRange: { minVariantPrice: { amount: "75000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[0], altText: "Pawmeals Daily Wellness" }, tags: ["dog", "adult", "wellness"], variants: { edges: [{ node: { id: "v1", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "2", title: "Pawmeals Joint Care", handle: "joint-care", description: "Glucosamine & chondroitin for joint health", priceRange: { minVariantPrice: { amount: "85000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[1], altText: "Pawmeals Joint Care" }, tags: ["dog", "adult", "joint"], variants: { edges: [{ node: { id: "v2", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "3", title: "Pawmeals Weight Management", handle: "weight-management", description: "Low-calorie formula for healthy weight", priceRange: { minVariantPrice: { amount: "80000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[2], altText: "Pawmeals Weight Management" }, tags: ["dog", "adult", "weight"], variants: { edges: [{ node: { id: "v3", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "4", title: "Pawmeals Puppy Growth", handle: "puppy-growth", description: "DHA & calcium for growing puppies", priceRange: { minVariantPrice: { amount: "78000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[0], altText: "Pawmeals Puppy Growth" }, tags: ["dog", "puppy"], variants: { edges: [{ node: { id: "v4", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "5", title: "Pawmeals Senior Vitality", handle: "senior-vitality", description: "Gentle formula for senior dogs 7+", priceRange: { minVariantPrice: { amount: "82000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[1], altText: "Pawmeals Senior Vitality" }, tags: ["dog", "senior"], variants: { edges: [{ node: { id: "v5", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "6", title: "Pawmeals Sensitive Digestion", handle: "sensitive-digestion", description: "Easily digestible for sensitive stomachs", priceRange: { minVariantPrice: { amount: "83000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[2], altText: "Pawmeals Sensitive Digestion" }, tags: ["dog", "sensitive"], variants: { edges: [{ node: { id: "v6", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "7", title: "Pawmeals Skin & Coat", handle: "skin-coat", description: "Omega-3 & 6 for healthy skin and shiny coat", priceRange: { minVariantPrice: { amount: "87000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[0], altText: "Pawmeals Skin & Coat" }, tags: ["dog", "skin"], variants: { edges: [{ node: { id: "v7", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "8", title: "Pawmeals High Energy", handle: "high-energy", description: "High-protein for active and working dogs", priceRange: { minVariantPrice: { amount: "90000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[1], altText: "Pawmeals High Energy" }, tags: ["dog", "active"], variants: { edges: [{ node: { id: "v8", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "9", title: "Pawmeals Cat Classic", handle: "cat-classic", description: "Premium cooked food for adult cats", priceRange: { minVariantPrice: { amount: "72000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[2], altText: "Pawmeals Cat Classic" }, tags: ["cat", "adult"], variants: { edges: [{ node: { id: "v9", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "10", title: "Pawmeals Cat Hairball", handle: "cat-hairball", description: "High-fiber formula to reduce hairballs", priceRange: { minVariantPrice: { amount: "76000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[0], altText: "Pawmeals Cat Hairball" }, tags: ["cat", "hairball"], variants: { edges: [{ node: { id: "v10", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "11", title: "Pawmeals Cat Kitten", handle: "cat-kitten", description: "DHA-rich formula for growing kittens", priceRange: { minVariantPrice: { amount: "74000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[1], altText: "Pawmeals Cat Kitten" }, tags: ["cat", "kitten"], variants: { edges: [{ node: { id: "v11", availableForSale: true } }] }, vendor: "Pawmeals" },
+  { id: "12", title: "Pawmeals Cat Senior", handle: "cat-senior", description: "Gentle nutrition for senior cats 7+", priceRange: { minVariantPrice: { amount: "78000", currencyCode: "IDR" } }, featuredImage: { url: PRODUCT_IMAGES[2], altText: "Pawmeals Cat Senior" }, tags: ["cat", "senior"], variants: { edges: [{ node: { id: "v12", availableForSale: true } }] }, vendor: "Pawmeals" },
 ];
 
 export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
@@ -55,8 +63,8 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
                 <Image
                   src={product.featuredImage.url}
                   alt={product.featuredImage.altText || product.title}
-                  width={300}
-                  height={300}
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
@@ -65,21 +73,21 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
                 </div>
               )}
               <div className="absolute top-2 left-2">
-                <span className="bg-pm-sage text-white text-body-xs font-bold px-2 py-0.5 rounded-pill">
+                <span className="bg-pm-sage text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {locale === "id" ? "Vet ✓" : "Vet ✓"}
                 </span>
               </div>
             </div>
             <div className="p-4 flex flex-col flex-1">
-              <span className="text-pm-brown/50 text-body-xs font-semibold uppercase tracking-wide mb-1">
+              <span className="text-pm-brown/50 text-xs font-semibold uppercase tracking-wide mb-1">
                 {product.tags?.includes("cat")
                   ? locale === "id" ? "Kucing" : "Cat"
                   : locale === "id" ? "Anjing" : "Dog"}
               </span>
-              <h3 className="font-heading font-bold text-pm-brown text-body-md leading-snug mb-1 line-clamp-2 group-hover:text-pm-caramel transition-colors">
+              <h3 className="font-heading font-bold text-pm-brown text-sm leading-snug mb-1 line-clamp-2 group-hover:text-pm-caramel transition-colors">
                 {product.title}
               </h3>
-              <p className="text-pm-brown/60 text-body-xs line-clamp-2 mb-3 flex-1">{product.description}</p>
+              <p className="text-pm-brown/60 text-xs line-clamp-2 mb-3 flex-1">{product.description}</p>
               <div className="flex items-center gap-0.5 mb-2">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="w-3 h-3 fill-pm-caramel text-pm-caramel" />
@@ -89,7 +97,7 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
                 <span className="font-heading font-bold text-pm-caramel">
                   {formatPrice(product.priceRange.minVariantPrice.amount, product.priceRange.minVariantPrice.currencyCode)}
                 </span>
-                <span className="flex items-center gap-1 bg-pm-caramel/10 text-pm-caramel text-body-xs font-bold px-2.5 py-1 rounded-lg group-hover:bg-pm-caramel group-hover:text-white transition-colors">
+                <span className="flex items-center gap-1 bg-pm-caramel/10 text-pm-caramel text-xs font-bold px-2.5 py-1 rounded-lg group-hover:bg-pm-caramel group-hover:text-white transition-colors">
                   <ShoppingCart className="w-3 h-3" />
                   {locale === "id" ? "Beli" : "Buy"}
                 </span>

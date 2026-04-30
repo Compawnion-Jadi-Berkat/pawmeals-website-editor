@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Award, ArrowRight, CheckCircle2 } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
+import { PLACEHOLDER_IMAGES } from "@/lib/placeholder-images";
 
 interface VetPartner {
   name: string;
@@ -22,6 +23,7 @@ const defaultVetPartners = (locale: Locale): VetPartner[] => [
     name: "drh. Sarah Wijaya",
     clinic: "Klinik Hewan Sehat Bersama",
     location: "Jakarta Selatan",
+    photo: { asset: { url: PLACEHOLDER_IMAGES.vetBadge } },
     quote: locale === "id"
       ? "Saya merekomendasikan Pawmeals kepada semua klien saya. Formulanya seimbang secara nutrisi dan hasilnya terlihat nyata pada kondisi bulu dan energi hewan peliharaan."
       : "I recommend Pawmeals to all my clients. The formula is nutritionally balanced and the results are visible in coat condition and pet energy levels.",
@@ -30,6 +32,7 @@ const defaultVetPartners = (locale: Locale): VetPartner[] => [
     name: "drh. Budi Santoso",
     clinic: "Animal Care Center",
     location: "Surabaya",
+    photo: { asset: { url: PLACEHOLDER_IMAGES.vetBadge } },
     quote: locale === "id"
       ? "Untuk anjing dengan masalah pencernaan sensitif, Pawmeals adalah pilihan terbaik yang saya temukan di pasar Indonesia."
       : "For dogs with sensitive digestive issues, Pawmeals is the best option I've found in the Indonesian market.",
@@ -38,6 +41,7 @@ const defaultVetPartners = (locale: Locale): VetPartner[] => [
     name: "drh. Maya Kusuma",
     clinic: "Pet Health Clinic",
     location: "Bandung",
+    photo: { asset: { url: PLACEHOLDER_IMAGES.vetBadge } },
     quote: locale === "id"
       ? "Bahan-bahan alami tanpa pengawet membuat Pawmeals menjadi pilihan ideal untuk hewan peliharaan yang membutuhkan diet khusus."
       : "Natural ingredients without preservatives make Pawmeals the ideal choice for pets requiring special diets.",

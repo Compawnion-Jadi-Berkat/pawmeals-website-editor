@@ -5,6 +5,14 @@ import { ArrowRight, ShoppingCart, Star } from "lucide-react";
 import { formatPrice } from "@/lib/shopify";
 import type { Locale } from "@/lib/i18n/config";
 import type { ShopifyProduct } from "@/types/shopify";
+import { PLACEHOLDER_IMAGES } from "@/lib/placeholder-images";
+
+const PRODUCT_IMAGES = [
+  PLACEHOLDER_IMAGES.productChicken,
+  PLACEHOLDER_IMAGES.productBeef,
+  PLACEHOLDER_IMAGES.productFish,
+  PLACEHOLDER_IMAGES.productChicken,
+];
 
 interface FeaturedProductsProps {
   locale: Locale;
@@ -40,7 +48,7 @@ export function FeaturedProducts({ locale, products }: FeaturedProductsProps) {
     priceRange: {
       minVariantPrice: { amount: String(75000 + i * 15000), currencyCode: "IDR" },
     },
-    featuredImage: null,
+    featuredImage: { url: PRODUCT_IMAGES[i], altText: ["Pawmeals Daily Wellness", "Pawmeals Joint Care", "Pawmeals Weight Management", "Pawmeals Cat Classic"][i] },
     tags: i < 3 ? ["dog"] : ["cat"],
     variants: { edges: [{ node: { availableForSale: true, id: `v-${i}` } }] },
     vendor: "Pawmeals",
