@@ -1,0 +1,231 @@
+{
+  "name": "Pawmeals — Klaviyo Customer Sync",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "pawmeals-customer-webhook",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Shopify Customer Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [240, 300],
+      "notes": "Receives POST from Shopify when new customer is created. Configure in Shopify Admin > Settings > Notifications > Webhooks > Customer creation"
+    },
+    {
+      "parameters": {
+        "jsCode": "const customer = $input.first().json.body;\n\nconst profile = {\n  email: customer.email,\n  first_name: customer.first_name || '',\n  last_name: customer.last_name || '',\n  phone_number: customer.phone || '',\n  properties: {\n    shopify_customer_id: customer.id,\n    accepts_marketing: customer.accepts_marketing,\n    total_orders: customer.orders_count || 0,\n    total_spent: customer.total_spent || '0',\n    tags: customer.tags || '',\n    created_at: customer.created_at,\n    locale: customer.default_address?.country_code === 'ID' ? 'id' : 'en',\n    city: customer.default_address?.city || '',\n    country: customer.default_address?.country || 'Indonesia'\n  }\n};\n\nreturn [{ json: profile }];\n"
+      },
+      "id": "format-profile",
+      "name": "Format Klaviyo Profile",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://a.klaviyo.com/api/profiles/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Klaviyo-API-Key {{ $env.KLAVIYO_PRIVATE_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "revision",
+              "value": "2024-02-15"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({ type: 'profile', attributes: $json }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "upsert-klaviyo-profile",
+      "name": "Upsert Klaviyo Profile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [680, 300],
+      "notes": "Creates or updates the customer profile in Klaviyo. Uses upsert behavior — safe to run multiple times."
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "check-marketing",
+              "leftValue": "={{ $('Format Klaviyo Profile').item.json.properties.accepts_marketing }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ]
+        }
+      },
+      "id": "check-marketing-consent",
+      "name": "Accepts Marketing?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://a.klaviyo.com/api/profile-subscription-bulk-create-jobs/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Klaviyo-API-Key {{ $env.KLAVIYO_PRIVATE_API_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "revision",
+              "value": "2024-02-15"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "data",
+              "value": "={{ JSON.stringify({ type: 'profile-subscription-bulk-create-job', attributes: { list_id: $env.KLAVIYO_LIST_ID, subscriptions: [{ channels: { email: ['MARKETING'] }, profile: { data: { type: 'profile', attributes: { email: $('Format Klaviyo Profile').item.json.email } } } }] } }) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "subscribe-to-list",
+      "name": "Subscribe to Pawmeals List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 220],
+      "notes": "Subscribes the customer to the main Pawmeals email marketing list in Klaviyo"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PAWMEALS_API_URL }}/api/webhooks/customer-synced",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $('Format Klaviyo Profile').item.json.email }}"
+            },
+            {
+              "name": "klaviyoSynced",
+              "value": "=true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify-backend",
+      "name": "Notify Pawmeals Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 380],
+      "notes": "Logs the Klaviyo sync event to the Pawmeals RDS database for KPI tracking"
+    }
+  ],
+  "connections": {
+    "Shopify Customer Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Klaviyo Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Klaviyo Profile": {
+      "main": [
+        [
+          {
+            "node": "Upsert Klaviyo Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Klaviyo Profile": {
+      "main": [
+        [
+          {
+            "node": "Accepts Marketing?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accepts Marketing?": {
+      "main": [
+        [
+          {
+            "node": "Subscribe to Pawmeals List",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Pawmeals Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subscribe to Pawmeals List": {
+      "main": [
+        [
+          {
+            "node": "Notify Pawmeals Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true
+  },
+  "tags": ["pawmeals", "klaviyo", "customers"],
+  "_pawmeals_setup_notes": {
+    "step1": "Import this JSON into your n8n instance",
+    "step2": "Set environment variables: KLAVIYO_PRIVATE_API_KEY, KLAVIYO_LIST_ID, PAWMEALS_API_URL",
+    "step3": "Activate the workflow and copy the webhook URL",
+    "step4": "In Shopify Admin > Settings > Notifications > Webhooks, add the webhook URL for 'Customer creation' event",
+    "step5": "Also add for 'Customer update' event to keep profiles in sync"
+  }
+}

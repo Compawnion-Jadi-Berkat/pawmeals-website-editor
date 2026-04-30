@@ -1,0 +1,190 @@
+{
+  "nav": {
+    "products": "Our Products",
+    "catering": "Pawmeals Catering",
+    "quiz": "Find Your Pawfect Pawmeals",
+    "blog": "Pawrenting Tips",
+    "vet": "Vet Exclusive",
+    "about": "About Us",
+    "faqs": "FAQs",
+    "cart": "Cart",
+    "account": "My Account",
+    "login": "Login",
+    "logout": "Logout",
+    "language": "Bahasa Indonesia"
+  },
+  "home": {
+    "hero": {
+      "badge": "Indonesia's #1 Cooked Pet Food",
+      "headline": "Cooked Food Specialist.",
+      "headline2": "Natural, No Preservatives.",
+      "subheadline": "Premium cooked meals crafted for your dog and cat — trusted by 220+ veterinary clinics across Indonesia.",
+      "cta_primary": "Shop Now",
+      "cta_secondary": "Find Your Pawfect Meal",
+      "cta_quiz": "Take the Quiz",
+      "trust_vets": "220+ Vet Clinics",
+      "trust_natural": "100% Natural",
+      "trust_cooked": "Freshly Cooked"
+    },
+    "why": {
+      "label": "Why Pawmeals",
+      "title": "Real Food. Real Love.",
+      "subtitle": "We believe your pet deserves the same quality food you eat — cooked fresh, with real ingredients, and no shortcuts.",
+      "point1_title": "Freshly Cooked",
+      "point1_desc": "Every meal is cooked fresh with human-grade ingredients. No preservatives, no artificial additives.",
+      "point2_title": "Vet Recommended",
+      "point2_desc": "Trusted and recommended by over 220 veterinary clinics across Indonesia.",
+      "point3_title": "Nutritionally Complete",
+      "point3_desc": "Formulated by pet nutrition experts to meet AAFCO standards for complete and balanced nutrition.",
+      "point4_title": "Delivered Fresh",
+      "point4_desc": "Delivered to your door in temperature-controlled packaging to preserve freshness."
+    },
+    "quiz_cta": {
+      "label": "Personalised Nutrition",
+      "title": "Not Sure Where to Start?",
+      "subtitle": "Answer 5 quick questions about your pet and we'll recommend the perfect Pawmeals plan.",
+      "cta": "Take the Free Quiz"
+    },
+    "products_preview": {
+      "label": "Our Products",
+      "title": "Crafted for Every Pet",
+      "subtitle": "From daily meals to special health formulas — find the right Pawmeals for your dog or cat.",
+      "cta": "View All Products"
+    },
+    "vet_trust": {
+      "label": "Vet Approved",
+      "title": "Trusted by Indonesia's Leading Vets",
+      "subtitle": "Recommended by 220+ veterinary clinics. Our formulas are developed in consultation with certified pet nutritionists.",
+      "cta": "Learn More"
+    },
+    "testimonials": {
+      "label": "Happy Pets",
+      "title": "What Pet Parents Say"
+    },
+    "newsletter": {
+      "title": "Get Pawrenting Tips & Exclusive Offers",
+      "subtitle": "Join 10,000+ pet parents who receive weekly nutrition tips and early access to new products.",
+      "placeholder": "Your email address",
+      "cta": "Subscribe",
+      "privacy": "We respect your privacy. Unsubscribe anytime."
+    }
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Premium cooked meals for dogs and cats — natural, nutritious, and delicious.",
+    "filter_all": "All",
+    "filter_dog": "Dogs",
+    "filter_cat": "Cats",
+    "filter_health": "Health Formulas",
+    "sort_featured": "Featured",
+    "sort_price_asc": "Price: Low to High",
+    "sort_price_desc": "Price: High to Low",
+    "add_to_cart": "Add to Cart",
+    "subscribe_save": "Subscribe & Save 10%",
+    "vet_badge": "Vet Recommended",
+    "natural_badge": "100% Natural",
+    "new_badge": "New",
+    "bestseller_badge": "Best Seller"
+  },
+  "quiz": {
+    "title": "Find Your Pawfect Pawmeals",
+    "subtitle": "Tell us about your pet and we'll find the perfect meal plan in under 2 minutes.",
+    "step_of": "Step {current} of {total}",
+    "next": "Next",
+    "back": "Back",
+    "see_results": "See My Results",
+    "restart": "Start Over",
+    "step1_title": "Is your pet a dog or cat?",
+    "step2_title": "How old is {name}?",
+    "step3_title": "What is {name}'s breed?",
+    "step4_title": "Any health concerns?",
+    "step5_title": "What is {name}'s ideal weight?",
+    "results_title": "Perfect! Here's {name}'s Pawmeals Plan",
+    "results_subtitle": "Based on your answers, we recommend these meals for {name}.",
+    "results_cta": "Add to Cart",
+    "results_consult": "Consult a Vet"
+  },
+  "catering": {
+    "title": "Pawmeals Catering",
+    "subtitle": "Bespoke cooked meal services for pet events, shelters, and boarding facilities.",
+    "cta": "Get a Quote"
+  },
+  "about": {
+    "title": "About Pawmeals",
+    "subtitle": "Born from a love of pets and a belief that they deserve better food."
+  },
+  "blog": {
+    "title": "Pawrenting Tips",
+    "subtitle": "Expert advice on pet nutrition, health, and happiness from our vet partners.",
+    "read_more": "Read More",
+    "by": "By",
+    "min_read": "min read"
+  },
+  "faqs": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about Pawmeals.",
+    "contact_cta": "Still have questions? Contact us"
+  },
+  "vet": {
+    "title": "Vet Exclusive",
+    "subtitle": "Resources and clinical nutrition information for veterinary professionals.",
+    "access_label": "For Veterinary Professionals Only",
+    "cta": "Request Access"
+  },
+  "cart": {
+    "title": "Your Cart",
+    "empty": "Your cart is empty",
+    "empty_cta": "Start Shopping",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "shipping_free": "Free",
+    "shipping_calculated": "Calculated at checkout",
+    "total": "Total",
+    "checkout": "Proceed to Checkout",
+    "continue_shopping": "Continue Shopping",
+    "remove": "Remove",
+    "quantity": "Qty"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "contact": "Contact Information",
+    "shipping_address": "Shipping Address",
+    "payment": "Payment",
+    "order_summary": "Order Summary",
+    "place_order": "Place Order",
+    "processing": "Processing..."
+  },
+  "account": {
+    "subscriptions_title": "My Subscriptions",
+    "next_delivery": "Next Delivery",
+    "pause": "Pause",
+    "cancel": "Cancel",
+    "modify": "Modify",
+    "resume": "Resume"
+  },
+  "footer": {
+    "tagline": "Cooked Food Specialist. Natural, No Preservatives.",
+    "shop": "Shop",
+    "company": "Company",
+    "support": "Support",
+    "follow": "Follow Us",
+    "copyright": "© {year} Pawmeals. All rights reserved.",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "shipping_policy": "Shipping Policy"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "success": "Success!",
+    "close": "Close",
+    "open": "Open",
+    "search": "Search",
+    "see_all": "See All",
+    "learn_more": "Learn More",
+    "contact_us": "Contact Us",
+    "whatsapp": "Chat on WhatsApp",
+    "idr": "IDR",
+    "free_shipping": "Free shipping on orders over Rp500.000"
+  }
+}

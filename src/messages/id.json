@@ -1,0 +1,190 @@
+{
+  "nav": {
+    "products": "Produk Kami",
+    "catering": "Pawmeals Catering",
+    "quiz": "Temukan Pawmeals Terbaik",
+    "blog": "Tips Pawrenting",
+    "vet": "Eksklusif Dokter Hewan",
+    "about": "Tentang Kami",
+    "faqs": "FAQ",
+    "cart": "Keranjang",
+    "account": "Akun Saya",
+    "login": "Masuk",
+    "logout": "Keluar",
+    "language": "English"
+  },
+  "home": {
+    "hero": {
+      "badge": "Makanan Hewan Matang #1 di Indonesia",
+      "headline": "Spesialis Makanan Matang.",
+      "headline2": "Alami, Tanpa Pengawet.",
+      "subheadline": "Makanan matang premium untuk anjing dan kucing Anda — dipercaya oleh 220+ klinik dokter hewan di seluruh Indonesia.",
+      "cta_primary": "Belanja Sekarang",
+      "cta_secondary": "Temukan Makanan Terbaik",
+      "cta_quiz": "Mulai Kuis",
+      "trust_vets": "220+ Klinik Dokter Hewan",
+      "trust_natural": "100% Alami",
+      "trust_cooked": "Dimasak Segar"
+    },
+    "why": {
+      "label": "Mengapa Pawmeals",
+      "title": "Makanan Nyata. Cinta Nyata.",
+      "subtitle": "Kami percaya hewan peliharaan Anda berhak mendapatkan makanan berkualitas sama seperti yang Anda makan — dimasak segar, dengan bahan-bahan nyata, tanpa kompromi.",
+      "point1_title": "Dimasak Segar",
+      "point1_desc": "Setiap makanan dimasak segar dengan bahan berkualitas manusia. Tanpa pengawet, tanpa bahan tambahan buatan.",
+      "point2_title": "Direkomendasikan Dokter Hewan",
+      "point2_desc": "Dipercaya dan direkomendasikan oleh lebih dari 220 klinik dokter hewan di seluruh Indonesia.",
+      "point3_title": "Nutrisi Lengkap",
+      "point3_desc": "Diformulasikan oleh ahli nutrisi hewan untuk memenuhi standar AAFCO untuk nutrisi lengkap dan seimbang.",
+      "point4_title": "Diantar Segar",
+      "point4_desc": "Diantar ke pintu Anda dalam kemasan berpendingin untuk menjaga kesegaran."
+    },
+    "quiz_cta": {
+      "label": "Nutrisi Personal",
+      "title": "Tidak Tahu Harus Mulai dari Mana?",
+      "subtitle": "Jawab 5 pertanyaan singkat tentang hewan peliharaan Anda dan kami akan merekomendasikan paket Pawmeals yang sempurna.",
+      "cta": "Mulai Kuis Gratis"
+    },
+    "products_preview": {
+      "label": "Produk Kami",
+      "title": "Dibuat untuk Setiap Hewan Peliharaan",
+      "subtitle": "Dari makanan harian hingga formula kesehatan khusus — temukan Pawmeals yang tepat untuk anjing atau kucing Anda.",
+      "cta": "Lihat Semua Produk"
+    },
+    "vet_trust": {
+      "label": "Disetujui Dokter Hewan",
+      "title": "Dipercaya oleh Dokter Hewan Terkemuka Indonesia",
+      "subtitle": "Direkomendasikan oleh 220+ klinik dokter hewan. Formula kami dikembangkan bersama ahli nutrisi hewan bersertifikat.",
+      "cta": "Pelajari Lebih Lanjut"
+    },
+    "testimonials": {
+      "label": "Hewan Peliharaan Bahagia",
+      "title": "Kata Para Pet Parent"
+    },
+    "newsletter": {
+      "title": "Dapatkan Tips Pawrenting & Penawaran Eksklusif",
+      "subtitle": "Bergabung dengan 10.000+ pet parent yang menerima tips nutrisi mingguan dan akses awal ke produk baru.",
+      "placeholder": "Alamat email Anda",
+      "cta": "Langganan",
+      "privacy": "Kami menghormati privasi Anda. Berhenti berlangganan kapan saja."
+    }
+  },
+  "products": {
+    "title": "Produk Kami",
+    "subtitle": "Makanan matang premium untuk anjing dan kucing — alami, bergizi, dan lezat.",
+    "filter_all": "Semua",
+    "filter_dog": "Anjing",
+    "filter_cat": "Kucing",
+    "filter_health": "Formula Kesehatan",
+    "sort_featured": "Unggulan",
+    "sort_price_asc": "Harga: Terendah",
+    "sort_price_desc": "Harga: Tertinggi",
+    "add_to_cart": "Tambah ke Keranjang",
+    "subscribe_save": "Langganan & Hemat 10%",
+    "vet_badge": "Direkomendasikan Dokter Hewan",
+    "natural_badge": "100% Alami",
+    "new_badge": "Baru",
+    "bestseller_badge": "Terlaris"
+  },
+  "quiz": {
+    "title": "Temukan Pawmeals Terbaik untuk Hewan Anda",
+    "subtitle": "Ceritakan tentang hewan peliharaan Anda dan kami akan menemukan paket makan yang sempurna dalam waktu kurang dari 2 menit.",
+    "step_of": "Langkah {current} dari {total}",
+    "next": "Selanjutnya",
+    "back": "Kembali",
+    "see_results": "Lihat Hasil Saya",
+    "restart": "Mulai Ulang",
+    "step1_title": "Apakah hewan peliharaan Anda anjing atau kucing?",
+    "step2_title": "Berapa umur {name}?",
+    "step3_title": "Apa ras {name}?",
+    "step4_title": "Ada masalah kesehatan?",
+    "step5_title": "Berapa berat ideal {name}?",
+    "results_title": "Sempurna! Ini Paket Pawmeals untuk {name}",
+    "results_subtitle": "Berdasarkan jawaban Anda, kami merekomendasikan makanan ini untuk {name}.",
+    "results_cta": "Tambah ke Keranjang",
+    "results_consult": "Konsultasi Dokter Hewan"
+  },
+  "catering": {
+    "title": "Pawmeals Catering",
+    "subtitle": "Layanan makanan matang bespoke untuk acara hewan peliharaan, shelter, dan fasilitas penitipan.",
+    "cta": "Dapatkan Penawaran"
+  },
+  "about": {
+    "title": "Tentang Pawmeals",
+    "subtitle": "Lahir dari kecintaan terhadap hewan peliharaan dan keyakinan bahwa mereka berhak mendapatkan makanan yang lebih baik."
+  },
+  "blog": {
+    "title": "Tips Pawrenting",
+    "subtitle": "Saran ahli tentang nutrisi, kesehatan, dan kebahagiaan hewan peliharaan dari mitra dokter hewan kami.",
+    "read_more": "Baca Selengkapnya",
+    "by": "Oleh",
+    "min_read": "menit baca"
+  },
+  "faqs": {
+    "title": "Pertanyaan yang Sering Diajukan",
+    "subtitle": "Semua yang perlu Anda ketahui tentang Pawmeals.",
+    "contact_cta": "Masih ada pertanyaan? Hubungi kami"
+  },
+  "vet": {
+    "title": "Eksklusif Dokter Hewan",
+    "subtitle": "Sumber daya dan informasi nutrisi klinis untuk profesional veteriner.",
+    "access_label": "Hanya untuk Profesional Veteriner",
+    "cta": "Minta Akses"
+  },
+  "cart": {
+    "title": "Keranjang Anda",
+    "empty": "Keranjang Anda kosong",
+    "empty_cta": "Mulai Belanja",
+    "subtotal": "Subtotal",
+    "shipping": "Pengiriman",
+    "shipping_free": "Gratis",
+    "shipping_calculated": "Dihitung saat checkout",
+    "total": "Total",
+    "checkout": "Lanjut ke Checkout",
+    "continue_shopping": "Lanjut Belanja",
+    "remove": "Hapus",
+    "quantity": "Jml"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "contact": "Informasi Kontak",
+    "shipping_address": "Alamat Pengiriman",
+    "payment": "Pembayaran",
+    "order_summary": "Ringkasan Pesanan",
+    "place_order": "Buat Pesanan",
+    "processing": "Memproses..."
+  },
+  "account": {
+    "subscriptions_title": "Langganan Saya",
+    "next_delivery": "Pengiriman Berikutnya",
+    "pause": "Jeda",
+    "cancel": "Batalkan",
+    "modify": "Ubah",
+    "resume": "Lanjutkan"
+  },
+  "footer": {
+    "tagline": "Spesialis Makanan Matang. Alami, Tanpa Pengawet.",
+    "shop": "Belanja",
+    "company": "Perusahaan",
+    "support": "Dukungan",
+    "follow": "Ikuti Kami",
+    "copyright": "© {year} Pawmeals. Hak cipta dilindungi.",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Syarat Layanan",
+    "shipping_policy": "Kebijakan Pengiriman"
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan. Silakan coba lagi.",
+    "success": "Berhasil!",
+    "close": "Tutup",
+    "open": "Buka",
+    "search": "Cari",
+    "see_all": "Lihat Semua",
+    "learn_more": "Pelajari Lebih Lanjut",
+    "contact_us": "Hubungi Kami",
+    "whatsapp": "Chat di WhatsApp",
+    "idr": "IDR",
+    "free_shipping": "Gratis ongkir untuk pesanan di atas Rp500.000"
+  }
+}
