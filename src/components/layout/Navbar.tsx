@@ -45,7 +45,8 @@ export function Navbar({ locale }: NavbarProps) {
   }, [pathname]);
 
   const otherLocale: Locale = locale === "id" ? "en" : "id";
-  const otherLocalePath = pathname.replace(`/${locale}`, `/${otherLocale}`);
+  const safePath = pathname ?? "/";
+  const otherLocalePath = safePath.replace(`/${locale}`, `/${otherLocale}`);
 
   return (
     <>
@@ -75,7 +76,7 @@ export function Navbar({ locale }: NavbarProps) {
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
             {navLinks(locale).map((link) => {
-              const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+              const isActive = safePath === link.href || safePath.startsWith(link.href + "/");
               return (
                 <Link
                   key={link.href}
@@ -116,7 +117,7 @@ export function Navbar({ locale }: NavbarProps) {
                   {(["id", "en"] as Locale[]).map((loc) => (
                     <Link
                       key={loc}
-                      href={loc === locale ? pathname : otherLocalePath}
+                      href={loc === locale ? safePath : otherLocalePath}
                       onClick={() => setIsLangOpen(false)}
                       className={`flex items-center gap-2.5 px-4 py-2.5 text-body-sm font-semibold transition-colors ${
                         loc === locale
@@ -163,7 +164,7 @@ export function Navbar({ locale }: NavbarProps) {
           <div className="lg:hidden bg-white border-t border-pm-sand/50 shadow-warm-lg animate-fade-in">
             <nav className="container py-4 flex flex-col gap-1" aria-label="Mobile navigation">
               {navLinks(locale).map((link) => {
-                const isActive = pathname === link.href;
+                const isActive = safePath === link.href;
                 return (
                   <Link
                     key={link.href}
@@ -184,7 +185,7 @@ export function Navbar({ locale }: NavbarProps) {
                 {(["id", "en"] as Locale[]).map((loc) => (
                   <Link
                     key={loc}
-                    href={loc === locale ? pathname : otherLocalePath}
+                    href={loc === locale ? safePath : otherLocalePath}
                     className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-body-sm font-semibold transition-colors flex-1 justify-center ${
                       loc === locale
                         ? "bg-pm-caramel/10 text-pm-caramel"

@@ -4,20 +4,19 @@ import { getProductByHandle } from "@/lib/shopify";
 import { ProductDetail } from "@/components/products/ProductDetail";
 import { ProductSchema, BreadcrumbSchema } from "@/components/seo/OrganizationSchema";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 interface ProductPageProps {
-  params: Promise<{ locale: Locale; handle: string }>;
+  params: Promise<{ locale: string; handle: string }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { locale, handle } = await params;
-  const data = await getProductByHandle(handle).catch(() => null);
+  const product = await getProductByHandle(handle).catch(() => null);
 
-  if (!data?.product) {
+  if (!product) {
     return { title: "Product Not Found" };
   }
-
-  const product = data.product;
 
   return {
     title: `${product.title} | Pawmeals`,
@@ -41,13 +40,11 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { locale, handle } = await params;
-  const data = await getProductByHandle(handle).catch(() => null);
+  const product = await getProductByHandle(handle).catch(() => null);
 
-  if (!data?.product) {
+  if (!product) {
     notFound();
   }
-
-  const product = data.product;
 
   const breadcrumbs = [
     { name: "Pawmeals", url: `https://pawmeals.com/${locale}` },
@@ -67,7 +64,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <ProductSchema product={product} locale={locale} />
       <BreadcrumbSchema items={breadcrumbs} />
 
-      <ProductDetail locale={locale} product={product} />
+      <ProductDetail locale={locale as Locale} product={product} />
     </>
   );
 }

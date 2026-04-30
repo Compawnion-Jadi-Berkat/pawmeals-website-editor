@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { FAQPageSchema } from "@/components/seo/OrganizationSchema";
 import { FAQAccordion } from "@/components/faqs/FAQAccordion";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

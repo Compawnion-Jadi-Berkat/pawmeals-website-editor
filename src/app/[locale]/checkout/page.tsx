@@ -1,14 +1,16 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/cart/CartProvider";
-import { Link } from "@/lib/i18n/config";
+import Link from "next/link";
 
 type PaymentMethod = "xendit" | "stripe";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
-  const { cart, cartTotal } = useCart();
+  const { cart } = useCart();
+  const cartTotal = cart?.cost?.totalAmount?.amount ?? "0";
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("xendit");
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({

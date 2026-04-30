@@ -2,12 +2,16 @@ import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "placeholder";
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const isSanityConfigured = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== "placeholder";
+
 export const sanityClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || "production",
+  projectId,
+  dataset,
   apiVersion: "2024-01-01",
   useCdn: process.env.NODE_ENV === "production",
-  token: process.env.SANITY_API_TOKEN, // only needed for mutations
+  token: process.env.SANITY_API_TOKEN,
   perspective: "published",
 });
 
@@ -36,7 +40,6 @@ export function urlForImage(source: SanityImageSource, options?: {
 
 // ─── GROQ QUERIES ─────────────────────────────────────────────────────────────
 
-// Blog posts
 export const BLOG_POSTS_QUERY = `
   *[_type == "blogPost" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
@@ -97,7 +100,6 @@ export const BLOG_POST_BY_SLUG_QUERY = `
   }
 `;
 
-// FAQs
 export const FAQS_QUERY = `
   *[_type == "faq" && !(_id in path("drafts.**"))] | order(order asc) {
     _id,
@@ -108,7 +110,6 @@ export const FAQS_QUERY = `
   }
 `;
 
-// Vet content
 export const VET_ARTICLES_QUERY = `
   *[_type == "vetArticle" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
     _id,
@@ -129,7 +130,6 @@ export const VET_ARTICLES_QUERY = `
   }
 `;
 
-// Homepage content
 export const HOMEPAGE_QUERY = `
   *[_type == "homepage" && !(_id in path("drafts.**"))][0] {
     heroSlides[] {
@@ -162,7 +162,6 @@ export const HOMEPAGE_QUERY = `
   }
 `;
 
-// Catering page
 export const CATERING_QUERY = `
   *[_type == "cateringPage" && !(_id in path("drafts.**"))][0] {
     heroHeadline,
@@ -186,7 +185,6 @@ export const CATERING_QUERY = `
   }
 `;
 
-// About page
 export const ABOUT_QUERY = `
   *[_type == "aboutPage" && !(_id in path("drafts.**"))][0] {
     story,
@@ -209,32 +207,39 @@ export const ABOUT_QUERY = `
 `;
 
 // ─── FETCH HELPERS ────────────────────────────────────────────────────────────
+// All helpers return empty/null gracefully when Sanity is not configured
 
-export async function getBlogPosts(locale: string = "id") {
-  const posts = await sanityClient.fetch(BLOG_POSTS_QUERY);
-  return posts;
+export async function getBlogPosts(_locale: string = "id") {
+  if (!isSanityConfigured) return [];
+  return sanityClient.fetch(BLOG_POSTS_QUERY);
 }
 
 export async function getBlogPostBySlug(slug: string) {
+  if (!isSanityConfigured) return null;
   return sanityClient.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
 }
 
 export async function getFAQs() {
+  if (!isSanityConfigured) return [];
   return sanityClient.fetch(FAQS_QUERY);
 }
 
 export async function getVetArticles() {
+  if (!isSanityConfigured) return [];
   return sanityClient.fetch(VET_ARTICLES_QUERY);
 }
 
 export async function getHomepageContent() {
+  if (!isSanityConfigured) return null;
   return sanityClient.fetch(HOMEPAGE_QUERY);
 }
 
 export async function getCateringContent() {
+  if (!isSanityConfigured) return null;
   return sanityClient.fetch(CATERING_QUERY);
 }
 
 export async function getAboutContent() {
+  if (!isSanityConfigured) return null;
   return sanityClient.fetch(ABOUT_QUERY);
 }

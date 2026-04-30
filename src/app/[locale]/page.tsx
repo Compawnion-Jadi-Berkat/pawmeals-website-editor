@@ -12,6 +12,7 @@ import { NewsletterSignup } from "@/components/home/NewsletterSignup";
 import { getFeaturedProducts } from "@/lib/shopify";
 import { getHomepageContent } from "@/lib/sanity/client";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

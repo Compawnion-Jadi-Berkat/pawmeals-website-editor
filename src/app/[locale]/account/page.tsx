@@ -1,7 +1,8 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/lib/i18n/config";
+import Link from "next/link";
 
 type Tab = "overview" | "orders" | "subscriptions" | "profile";
 

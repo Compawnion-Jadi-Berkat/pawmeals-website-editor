@@ -10,7 +10,7 @@ import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { TikTokPixel } from "@/components/analytics/TikTokPixel";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
-import { locales } from "@/lib/i18n/config";
+import { locales, defaultLocale } from "@/lib/i18n/config";
 import type { Locale } from "@/lib/i18n/config";
 import "@/app/globals.css";
 
@@ -37,9 +37,10 @@ export const viewport: Viewport = {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale = locales.includes(rawLocale as Locale) ? (rawLocale as Locale) : defaultLocale;
   const t = await getTranslations({ locale, namespace: "meta" });
 
   return {
@@ -95,18 +96,18 @@ export async function generateMetadata({
   };
 }
 
-export function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
-}
+// generateStaticParams removed — all locale routes are fully dynamic (Shopify cart + next-intl).
+// Locale routing is handled by middleware.ts at the edge.
 
 export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = await params;
+  const { locale: rawLocale } = await params;
+  const locale = rawLocale as Locale;
 
   if (!locales.includes(locale)) {
     notFound();
@@ -130,9 +131,7 @@ export default async function LocaleLayout({
         <link rel="manifest" href="/manifest.json" />
 
         {/* Google Tag Manager */}
-        {process.env.NEXT_PUBLIC_GTM_ID && (
-          <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID} />
-        )}
+        <GoogleTagManager />
       </head>
       <body className="bg-pm-cream text-pm-brown antialiased">
         {/* AEO: Organization Structured Data */}
@@ -159,12 +158,8 @@ export default async function LocaleLayout({
         </NextIntlClientProvider>
 
         {/* Analytics Pixels (loaded after hydration) */}
-        {process.env.NEXT_PUBLIC_META_PIXEL_ID && (
-          <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
-        )}
-        {process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID && (
-          <TikTokPixel pixelId={process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID} />
-        )}
+        <MetaPixel />
+        <TikTokPixel />
       </body>
     </html>
   );

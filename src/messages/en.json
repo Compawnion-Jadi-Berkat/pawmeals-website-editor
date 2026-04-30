@@ -67,6 +67,10 @@
       "placeholder": "Your email address",
       "cta": "Subscribe",
       "privacy": "We respect your privacy. Unsubscribe anytime."
+    },
+    "meta": {
+      "title": "Pawmeals — Premium Cooked Food for Dogs & Cats",
+      "description": "Healthy and delicious food for your pets. Made from carefully selected natural ingredients, no preservatives, vet-approved."
     }
   },
   "products": {
@@ -84,7 +88,11 @@
     "vet_badge": "Vet Recommended",
     "natural_badge": "100% Natural",
     "new_badge": "New",
-    "bestseller_badge": "Best Seller"
+    "bestseller_badge": "Best Seller",
+    "meta": {
+      "title": "Pawmeals Products — Healthy Food for Dogs & Cats",
+      "description": "Discover premium cooked food for your dog and cat. Made from natural ingredients, no preservatives, vet-approved."
+    }
   },
   "quiz": {
     "title": "Find Your Pawfect Pawmeals",
@@ -186,5 +194,10 @@
     "whatsapp": "Chat on WhatsApp",
     "idr": "IDR",
     "free_shipping": "Free shipping on orders over Rp500.000"
+  },
+  "meta": {
+    "title": "Pawmeals — Indonesia's #1 Natural Dog Food",
+    "description": "Fresh, natural, preservative-free dog food. Formulated by canine nutritionists. Suitable for sensitive dogs. Free shipping across Indonesia.",
+    "keywords": "natural dog food, dog food Indonesia, pawmeals, fresh dog food, canine nutrition"
   }
 }

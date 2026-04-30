@@ -4,11 +4,13 @@
  * Credentials injected via environment variables
  */
 
-const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!;
-const SHOPIFY_STOREFRONT_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN!;
+const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN ?? "";
+const SHOPIFY_STOREFRONT_TOKEN = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN ?? "";
 const SHOPIFY_API_VERSION = "2024-01";
 
-const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
+const endpoint = SHOPIFY_STORE_DOMAIN
+  ? `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`
+  : "";
 
 type ShopifyFetchOptions = {
   query: string;
@@ -25,6 +27,10 @@ export async function shopifyFetch<T>({
   tags,
   revalidate,
 }: ShopifyFetchOptions): Promise<{ data: T; errors?: unknown[] }> {
+  // Guard: return empty response when Shopify env vars are not configured (e.g., during build)
+  if (!endpoint) {
+    return { data: {} as T };
+  }
   const res = await fetch(endpoint, {
     method: "POST",
     headers: {

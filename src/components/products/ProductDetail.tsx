@@ -15,7 +15,7 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ locale, product }: ProductDetailProps) {
-  const { addToCart, isLoading } = useCart();
+  const { addItem: addToCart, isLoading } = useCart();
   const [selectedVariantId, setSelectedVariantId] = useState(
     product.variants.edges[0]?.node.id ?? ""
   );

@@ -67,6 +67,10 @@
       "placeholder": "Alamat email Anda",
       "cta": "Langganan",
       "privacy": "Kami menghormati privasi Anda. Berhenti berlangganan kapan saja."
+    },
+    "meta": {
+      "title": "Pawmeals — Makanan Masak Premium untuk Anjing & Kucing",
+      "description": "Makanan sehat dan lezat untuk hewan peliharaan Anda. Dibuat dari bahan alami pilihan, tanpa pengawet, disetujui dokter hewan."
     }
   },
   "products": {
@@ -84,7 +88,11 @@
     "vet_badge": "Direkomendasikan Dokter Hewan",
     "natural_badge": "100% Alami",
     "new_badge": "Baru",
-    "bestseller_badge": "Terlaris"
+    "bestseller_badge": "Terlaris",
+    "meta": {
+      "title": "Produk Pawmeals — Makanan Sehat untuk Anjing & Kucing",
+      "description": "Temukan makanan masak premium untuk anjing dan kucing Anda. Dibuat dari bahan alami, tanpa pengawet, disetujui dokter hewan."
+    }
   },
   "quiz": {
     "title": "Temukan Pawmeals Terbaik untuk Hewan Anda",
@@ -186,5 +194,10 @@
     "whatsapp": "Chat di WhatsApp",
     "idr": "IDR",
     "free_shipping": "Gratis ongkir untuk pesanan di atas Rp500.000"
+  },
+  "meta": {
+    "title": "Pawmeals — Makanan Anjing Alami #1 Indonesia",
+    "description": "Makanan anjing segar, alami, tanpa pengawet. Diformulasikan oleh ahli nutrisi anjing. Cocok untuk anjing sensitif. Gratis ongkir se-Indonesia.",
+    "keywords": "makanan anjing alami, dog food Indonesia, pawmeals, makanan anjing segar, nutrisi anjing"
   }
 }

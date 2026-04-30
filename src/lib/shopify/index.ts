@@ -276,3 +276,8 @@ export function getProductPetType(product: ShopifyProduct): "dog" | "cat" | "bot
   if (petType === "both") return "both";
   return "dog";
 }
+
+// Alias: getAllProducts fetches all products without filters
+export async function getAllProducts() {
+  return getProducts({});
+}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CartPageClient } from "@/components/cart/CartPageClient";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

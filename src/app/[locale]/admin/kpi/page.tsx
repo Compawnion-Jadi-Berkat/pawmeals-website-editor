@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { KPIDashboardClient } from "@/components/admin/KPIDashboardClient";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "KPI Dashboard | Pawmeals Admin",

@@ -7,6 +7,8 @@ import { ProductFilters } from "@/components/products/ProductFilters";
 import { BreadcrumbSchema } from "@/components/seo/OrganizationSchema";
 import type { Locale } from "@/lib/i18n/config";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

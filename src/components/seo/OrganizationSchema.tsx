@@ -251,3 +251,6 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
     />
   );
 }
+
+// Alias export for FAQPageSchema
+export const FAQPageSchema = FAQSchema;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Phone, MessageCircle, CheckCircle2 } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

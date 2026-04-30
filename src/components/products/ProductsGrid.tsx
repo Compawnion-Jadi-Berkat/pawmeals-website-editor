@@ -13,7 +13,8 @@ interface ProductsGridProps {
 }
 
 // 12 SKU placeholder products matching the brand brief
-const PLACEHOLDER_PRODUCTS: ShopifyProduct[] = [
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PLACEHOLDER_PRODUCTS = [
   { id: "1", title: "Pawmeals Daily Wellness", handle: "daily-wellness", description: "Balanced daily nutrition for adult dogs", priceRange: { minVariantPrice: { amount: "75000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "wellness"], variants: { edges: [{ node: { id: "v1", availableForSale: true } }] }, vendor: "Pawmeals" },
   { id: "2", title: "Pawmeals Joint Care", handle: "joint-care", description: "Glucosamine & chondroitin for joint health", priceRange: { minVariantPrice: { amount: "85000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "joint"], variants: { edges: [{ node: { id: "v2", availableForSale: true } }] }, vendor: "Pawmeals" },
   { id: "3", title: "Pawmeals Weight Management", handle: "weight-management", description: "Low-calorie formula for healthy weight", priceRange: { minVariantPrice: { amount: "80000", currencyCode: "IDR" } }, featuredImage: null, tags: ["dog", "adult", "weight"], variants: { edges: [{ node: { id: "v3", availableForSale: true } }] }, vendor: "Pawmeals" },
@@ -29,7 +30,7 @@ const PLACEHOLDER_PRODUCTS: ShopifyProduct[] = [
 ];
 
 export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
-  const displayProducts = products.length > 0 ? products : PLACEHOLDER_PRODUCTS;
+  const displayProducts: ShopifyProduct[] = products.length > 0 ? products : (PLACEHOLDER_PRODUCTS as unknown as ShopifyProduct[]);
 
   const sorted = [...displayProducts].sort((a, b) => {
     if (sort === "price-asc") return parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount);

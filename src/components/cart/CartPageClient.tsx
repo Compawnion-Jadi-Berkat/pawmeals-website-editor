@@ -13,7 +13,7 @@ interface CartPageClientProps {
 }
 
 export function CartPageClient({ locale }: CartPageClientProps) {
-  const { cart, removeFromCart, updateQuantity, isLoading } = useCart();
+  const { cart, removeItem: removeFromCart, updateItem: updateQuantity, isLoading } = useCart();
 
   const t = {
     cart: locale === "id" ? "Keranjang Belanja" : "Shopping Cart",
