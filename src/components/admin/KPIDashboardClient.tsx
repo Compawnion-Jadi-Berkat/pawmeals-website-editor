@@ -314,12 +314,11 @@ function buildPlaceholderMetrics(locale: Locale): KPIMetric[] {
   ];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildMetrics(data: any, locale: Locale): KPIMetric[] {
-  // When real API data is available, map it here
-  // Falls back to placeholder if data is empty
+// NOTE: Replace Record<string, unknown> with a typed API response interface
+// once the real KPI API endpoint is connected.
+function buildMetrics(data: Record<string, unknown> | null, locale: Locale): KPIMetric[] {
   if (!data || Object.keys(data).length === 0) {
     return buildPlaceholderMetrics(locale);
   }
-  return buildPlaceholderMetrics(locale); // Replace with real mapping
+  return buildPlaceholderMetrics(locale); // TODO: map real API fields here
 }

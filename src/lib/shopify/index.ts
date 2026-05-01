@@ -75,11 +75,11 @@ export async function getProductRecommendations(productId: string): Promise<Shop
 }
 
 export async function getDogProducts() {
-  return getProducts({ query: "tag:dog", first: 20, tags: ["products", "dog"] } as any);
+  return getProducts({ query: "tag:dog", first: 20 });
 }
 
 export async function getCatProducts() {
-  return getProducts({ query: "tag:cat", first: 20, tags: ["products", "cat"] } as any);
+  return getProducts({ query: "tag:cat", first: 20 });
 }
 
 export async function getHealthProducts() {

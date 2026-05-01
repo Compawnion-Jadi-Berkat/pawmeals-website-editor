@@ -25,10 +25,16 @@ const nextConfig = {
         protocol: "https",
         hostname: "d2xsxph8kpxj0f.cloudfront.net",
       },
+      {
+        // Unsplash images (used as fallback until Shopify/Sanity connected)
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 3600, // Cache optimised images for 1 hour minimum
   },
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion", "recharts"],
@@ -41,6 +47,7 @@ const nextConfig = {
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
@@ -50,6 +57,23 @@ const nextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
+          {
+            // Prevent cross-origin resource leakage
+            key: "Cross-Origin-Resource-Policy",
+            value: "same-site",
+          },
+          {
+            // Prevent cross-origin opener attacks
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+        ],
+      },
+      {
+        // Allow Sanity Studio to be embedded in iframes from sanity.io
+        source: "/studio/(.*)",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
         ],
       },
     ];

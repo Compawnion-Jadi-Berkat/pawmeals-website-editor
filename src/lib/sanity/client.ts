@@ -207,42 +207,43 @@ export const ABOUT_QUERY = `
   }
 `;
 
-// ─── FETCH HELPERS ────────────────────────────────────────────────────────────
-// All helpers return empty/null gracefully when Sanity is not configured
-
+//// ─── FETCH HELPERS ────────────────────────────────────────────────────────────
+// All helpers return empty/null gracefully when Sanity is not configured or
+// when the network request fails (e.g. during local dev without credentials).
 export async function getBlogPosts(_locale: string = "id") {
   if (!isSanityConfigured) return [];
-  return sanityClient.fetch(BLOG_POSTS_QUERY);
+  try { return await sanityClient.fetch(BLOG_POSTS_QUERY); }
+  catch (e) { console.warn("[Sanity] getBlogPosts failed:", e); return []; }
 }
-
 export async function getBlogPostBySlug(slug: string) {
   if (!isSanityConfigured) return null;
-  return sanityClient.fetch(BLOG_POST_BY_SLUG_QUERY, { slug });
+  try { return await sanityClient.fetch(BLOG_POST_BY_SLUG_QUERY, { slug }); }
+  catch (e) { console.warn("[Sanity] getBlogPostBySlug failed:", e); return null; }
 }
-
 export async function getFAQs() {
   if (!isSanityConfigured) return [];
-  return sanityClient.fetch(FAQS_QUERY);
+  try { return await sanityClient.fetch(FAQS_QUERY); }
+  catch (e) { console.warn("[Sanity] getFAQs failed:", e); return []; }
 }
-
 export async function getVetArticles() {
   if (!isSanityConfigured) return [];
-  return sanityClient.fetch(VET_ARTICLES_QUERY);
+  try { return await sanityClient.fetch(VET_ARTICLES_QUERY); }
+  catch (e) { console.warn("[Sanity] getVetArticles failed:", e); return []; }
 }
-
 export async function getHomepageContent() {
   if (!isSanityConfigured) return null;
-  return sanityClient.fetch(HOMEPAGE_QUERY);
+  try { return await sanityClient.fetch(HOMEPAGE_QUERY); }
+  catch (e) { console.warn("[Sanity] getHomepageContent failed:", e); return null; }
 }
-
 export async function getCateringContent() {
   if (!isSanityConfigured) return null;
-  return sanityClient.fetch(CATERING_QUERY);
+  try { return await sanityClient.fetch(CATERING_QUERY); }
+  catch (e) { console.warn("[Sanity] getCateringContent failed:", e); return null; }
 }
-
 export async function getAboutContent() {
   if (!isSanityConfigured) return null;
-  return sanityClient.fetch(ABOUT_QUERY);
+  try { return await sanityClient.fetch(ABOUT_QUERY); }
+  catch (e) { console.warn("[Sanity] getAboutContent failed:", e); return null; }
 }
 
 export const PAWRENTING_TIPS_QUERY = `
@@ -377,21 +378,27 @@ export const ABOUT_FULL_QUERY = `
 `;
 
 export async function getPawrentingTips() {
-  return sanityClient.fetch(PAWRENTING_TIPS_QUERY);
+  if (!isSanityConfigured) return [];
+  try { return await sanityClient.fetch(PAWRENTING_TIPS_QUERY); }
+  catch (e) { console.warn("[Sanity] getPawrentingTips failed:", e); return []; }
 }
-
 export async function getPawrentingTipBySlug(slug: string) {
-  return sanityClient.fetch(PAWRENTING_TIP_BY_SLUG_QUERY, { slug });
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(PAWRENTING_TIP_BY_SLUG_QUERY, { slug }); }
+  catch (e) { console.warn("[Sanity] getPawrentingTipBySlug failed:", e); return null; }
 }
-
 export async function getVetExclusiveContent() {
-  return sanityClient.fetch(VET_EXCLUSIVE_QUERY);
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(VET_EXCLUSIVE_QUERY); }
+  catch (e) { console.warn("[Sanity] getVetExclusiveContent failed:", e); return null; }
 }
-
 export async function getCateringFullContent() {
-  return sanityClient.fetch(CATERING_FULL_QUERY);
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(CATERING_FULL_QUERY); }
+  catch (e) { console.warn("[Sanity] getCateringFullContent failed:", e); return null; }
 }
-
 export async function getAboutFullContent() {
-  return sanityClient.fetch(ABOUT_FULL_QUERY);
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(ABOUT_FULL_QUERY); }
+  catch (e) { console.warn("[Sanity] getAboutFullContent failed:", e); return null; }
 }
