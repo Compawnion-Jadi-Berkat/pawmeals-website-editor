@@ -2,9 +2,10 @@ import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "placeholder";
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-const isSanityConfigured = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID && process.env.NEXT_PUBLIC_SANITY_PROJECT_ID !== "placeholder";
+// Sanity is always configured — project ID lr00lxe1 is hardcoded as fallback
+const isSanityConfigured = true;
 
 export const sanityClient = createClient({
   projectId,
@@ -242,4 +243,155 @@ export async function getCateringContent() {
 export async function getAboutContent() {
   if (!isSanityConfigured) return null;
   return sanityClient.fetch(ABOUT_QUERY);
+}
+
+export const PAWRENTING_TIPS_QUERY = `
+  *[_type == "pawrentingTip" && !(_id in path("drafts.**"))] | order(publishedAt desc) {
+    _id,
+    title,
+    slug { current },
+    excerpt,
+    publishedAt,
+    readingTime,
+    category,
+    tags,
+    featuredImage {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    },
+    author-> {
+      name,
+      role,
+      credentials,
+      photo { asset->{ _id, url } }
+    },
+    seo { title, description }
+  }
+`;
+
+export const PAWRENTING_TIP_BY_SLUG_QUERY = `
+  *[_type == "pawrentingTip" && slug.current == $slug && !(_id in path("drafts.**"))][0] {
+    _id,
+    title,
+    slug { current },
+    excerpt,
+    publishedAt,
+    readingTime,
+    category,
+    tags,
+    body,
+    featuredImage {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    },
+    author-> {
+      name,
+      role,
+      credentials,
+      bio,
+      photo { asset->{ _id, url } }
+    },
+    relatedProducts,
+    seo { title, description }
+  }
+`;
+
+export const VET_EXCLUSIVE_QUERY = `
+  *[_type == "vetExclusivePage" && !(_id in path("drafts.**"))][0] {
+    heroHeadline,
+    heroSubheadline,
+    heroImage { asset->{ _id, url }, alt },
+    vetTestimonials[] {
+      vetName,
+      credentials,
+      clinicName,
+      location,
+      quote,
+      photo { asset->{ _id, url } }
+    },
+    partnerClinics[] {
+      clinicName,
+      address,
+      city,
+      phone,
+      googleMapsUrl,
+      logo { asset->{ _id, url } }
+    },
+    vetQA[] {
+      question,
+      answer,
+      answeredBy-> { name, credentials, photo { asset->{ _id, url } } }
+    }
+  }
+`;
+
+export const CATERING_FULL_QUERY = `
+  *[_type == "cateringPage" && !(_id in path("drafts.**"))][0] {
+    heroHeadline,
+    heroSubheadline,
+    heroImage { asset->{ _id, url }, alt },
+    services[] {
+      title,
+      description,
+      icon,
+      price,
+      image { asset->{ _id, url } }
+    },
+    howItWorks[] { step, title, description },
+    gallery[] { asset->{ _id, url }, alt },
+    testimonials[] {
+      name,
+      organization,
+      quote,
+      photo { asset->{ _id, url } }
+    },
+    whatsappNumber,
+    ctaText
+  }
+`;
+
+export const ABOUT_FULL_QUERY = `
+  *[_type == "aboutPage" && !(_id in path("drafts.**"))][0] {
+    heroHeadline,
+    heroImage { asset->{ _id, url }, alt },
+    story,
+    pawmiracleStory,
+    pawmiracleImage { asset->{ _id, url } },
+    mission,
+    vision,
+    values[] { title, description, icon },
+    brandProof[] { stat, description, icon },
+    team[] {
+      name,
+      role,
+      bio,
+      photo { asset->{ _id, url } }
+    },
+    milestones[] { year, title, description },
+    certifications[] {
+      name,
+      description,
+      logo { asset->{ _id, url } }
+    }
+  }
+`;
+
+export async function getPawrentingTips() {
+  return sanityClient.fetch(PAWRENTING_TIPS_QUERY);
+}
+
+export async function getPawrentingTipBySlug(slug: string) {
+  return sanityClient.fetch(PAWRENTING_TIP_BY_SLUG_QUERY, { slug });
+}
+
+export async function getVetExclusiveContent() {
+  return sanityClient.fetch(VET_EXCLUSIVE_QUERY);
+}
+
+export async function getCateringFullContent() {
+  return sanityClient.fetch(CATERING_FULL_QUERY);
+}
+
+export async function getAboutFullContent() {
+  return sanityClient.fetch(ABOUT_FULL_QUERY);
 }

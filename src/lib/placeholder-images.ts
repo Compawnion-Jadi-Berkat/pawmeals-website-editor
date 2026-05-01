@@ -1,26 +1,99 @@
 /**
  * Pawmeals Placeholder Images
- * CDN URLs for brand-accurate placeholder images.
- * Replace with real Shopify/Sanity image URLs once connected.
+ * Real free stock photos from Unsplash, hosted on Manus CDN.
+ * These are used as fallbacks when Sanity / Shopify data is not yet connected.
+ * Replace with actual brand photography once available in Sanity.
+ *
+ * Image license: Unsplash free license — https://unsplash.com/license
  */
 
+const CDN = "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd";
+
 export const PLACEHOLDER_IMAGES = {
-  // Hero carousel images
-  hero1: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-hero-1_3f04e5a6.jpg",
-  hero2: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-hero-2_f0324b33.jpg",
-  hero3: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-hero-3_b5b2f8fc.jpg",
+  // ── Hero Carousel ─────────────────────────────────────────────────────────
+  hero1: `${CDN}/hero-dog-eating_78f0a22c.jpg`,
+  hero2: `${CDN}/hero-dogs-running_0a1ae0de.jpg`,
+  hero3: `${CDN}/hero-dog-happy_f2b66dd1.jpg`,
 
-  // Product images
-  productChicken: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-product-chicken_d98e88d6.jpg",
-  productBeef: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-product-beef_b30fbfc9.jpg",
-  // Fish and others use the compressed webp URLs from generate_image
-  productFish: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-product-fish-APa2R298gGs9b9QbHoLBAA.webp",
+  // ── Natural Ingredients ───────────────────────────────────────────────────
+  ingredientChicken: `${CDN}/ingredient-chicken_83f61688.jpg`,
+  ingredientBeef:    `${CDN}/ingredient-beef_db8dc068.jpg`,
+  ingredientFish:    `${CDN}/ingredient-fish_ad26ed13.jpg`,
+  ingredientLamb:    `${CDN}/ingredient-lamb_5cb71c95.jpg`,
+  ingredientDuck:    `${CDN}/ingredient-duck_58fe1155.jpg`,
+  freshIngredients:  `${CDN}/fresh-ingredients_173e4ce3.jpg`,
 
-  // Section images
-  ingredients: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-ingredients-RWkGZCXdwBCvAcuKtWJrJq.webp",
-  vetBadge: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-vet-badge-L55teuH9ymDzvJiyQRpgeD.webp",
-  catering: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-catering-CHQiKusKHRUmqahhX9PPdv.webp",
-  quizDog: "https://d2xsxph8kpxj0f.cloudfront.net/94657144/UbKbLaufZwS2zSdhe5Fuyd/pawmeals-quiz-dog-RW2nVckJJvfLMwLX7fzPjN.webp",
+  // ── Dogs ──────────────────────────────────────────────────────────────────
+  dogEatingBowl:    `${CDN}/dog-eating-bowl_f531df56.jpg`,
+  dogHappyPortrait: `${CDN}/dog-happy-portrait_8210cad9.jpg`,
+  dogGoldenHappy:   `${CDN}/dog-golden-happy_0f9a7719.jpg`,
+  dogSmallCute:     `${CDN}/dog-small-cute_fc16bde5.jpg`,
+
+  // ── Vet / Clinic ──────────────────────────────────────────────────────────
+  vetWithDog:  `${CDN}/vet-with-dog_3b6c0c97.jpg`,
+  vetPortrait: `${CDN}/vet-portrait_36946422.jpg`,
+  vetClinic:   `${CDN}/vet-clinic_bc4bb8ae.jpg`,
+
+  // ── About / Kitchen ───────────────────────────────────────────────────────
+  kitchenCooking: `${CDN}/kitchen-cooking_9a86ebe4.jpg`,
+  aboutTeam:      `${CDN}/about-team_65ef381c.jpg`,
+
+  // ── Cat Food ──────────────────────────────────────────────────────────────
+  catEating: `${CDN}/cat-eating_38edc78c.jpg`,
+  catHappy:  `${CDN}/cat-happy_fccf6730.jpg`,
+
+  // ── Quiz / Lifestyle ──────────────────────────────────────────────────────
+  quizDogOwner:    `${CDN}/quiz-dog-owner_3e2905ba.jpg`,
+  lifestyleDogOwner: `${CDN}/lifestyle-dog-owner_3d2f441d.jpg`,
+
+  // ── Legacy keys (kept for backward compat with existing components) ───────
+  productChicken: `${CDN}/ingredient-chicken_83f61688.jpg`,
+  productBeef:    `${CDN}/ingredient-beef_db8dc068.jpg`,
+  productFish:    `${CDN}/ingredient-fish_ad26ed13.jpg`,
+  ingredients:    `${CDN}/fresh-ingredients_173e4ce3.jpg`,
+  vetBadge:       `${CDN}/vet-with-dog_3b6c0c97.jpg`,
+  catering:       `${CDN}/dog-eating-bowl_f531df56.jpg`,
+  quizDog:        `${CDN}/quiz-dog-owner_3e2905ba.jpg`,
 } as const;
 
 export type PlaceholderImageKey = keyof typeof PLACEHOLDER_IMAGES;
+
+/**
+ * Maps a product title keyword → best matching placeholder image.
+ * Used by ProductsGrid and FeaturedProducts as fallback.
+ */
+const PRODUCT_IMAGE_MAP: Array<[string, string]> = [
+  ["chicken",  PLACEHOLDER_IMAGES.ingredientChicken],
+  ["chicky",   PLACEHOLDER_IMAGES.ingredientChicken],
+  ["beef",     PLACEHOLDER_IMAGES.ingredientBeef],
+  ["beefy",    PLACEHOLDER_IMAGES.ingredientBeef],
+  ["fish",     PLACEHOLDER_IMAGES.ingredientFish],
+  ["fishy",    PLACEHOLDER_IMAGES.ingredientFish],
+  ["salmon",   PLACEHOLDER_IMAGES.ingredientFish],
+  ["tuna",     PLACEHOLDER_IMAGES.ingredientFish],
+  ["lamb",     PLACEHOLDER_IMAGES.ingredientLamb],
+  ["la la",    PLACEHOLDER_IMAGES.ingredientLamb],
+  ["fame",     PLACEHOLDER_IMAGES.ingredientLamb],
+  ["duck",     PLACEHOLDER_IMAGES.ingredientDuck],
+  ["quack",    PLACEHOLDER_IMAGES.ingredientDuck],
+  ["delish",   PLACEHOLDER_IMAGES.ingredientDuck],
+  ["rabbit",   PLACEHOLDER_IMAGES.freshIngredients],
+  ["rabbetit", PLACEHOLDER_IMAGES.freshIngredients],
+  ["pork",     PLACEHOLDER_IMAGES.freshIngredients],
+  ["porky",    PLACEHOLDER_IMAGES.freshIngredients],
+  ["parazzi",  PLACEHOLDER_IMAGES.freshIngredients],
+  ["goat",     PLACEHOLDER_IMAGES.freshIngredients],
+  ["bundle",   PLACEHOLDER_IMAGES.dogEatingBowl],
+  ["senior",   PLACEHOLDER_IMAGES.dogHappyPortrait],
+  ["granny",   PLACEHOLDER_IMAGES.dogHappyPortrait],
+  ["cat",      PLACEHOLDER_IMAGES.catEating],
+];
+
+/** Returns the best placeholder image URL for a given product title */
+export function getProductPlaceholder(title: string): string {
+  const lower = title.toLowerCase();
+  for (const [key, url] of PRODUCT_IMAGE_MAP) {
+    if (lower.includes(key)) return url;
+  }
+  return PLACEHOLDER_IMAGES.dogEatingBowl;
+}
