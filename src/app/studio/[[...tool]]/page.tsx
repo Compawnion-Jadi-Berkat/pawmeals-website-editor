@@ -1,8 +1,9 @@
 /**
  * Embedded Sanity Studio — served at /studio
  *
- * Sanity Studio is a pure client-side SPA. It must NOT be server-rendered.
- * We use next/dynamic with ssr:false to ensure it only runs in the browser.
+ * Sanity Studio v5 uses React 19 hooks (useEffectEvent) that are not available
+ * in the server bundle. We must lazy-load BOTH NextStudio AND sanity.config
+ * inside the same dynamic import so that neither ever touches the SSR bundle.
  *
  * Access: https://your-domain.com/studio
  * Auth: Sanity OAuth (must have access to project lr00lxe1)
@@ -10,12 +11,24 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import config from "../../../../sanity.config";
 
-// Dynamically import NextStudio with SSR disabled — Studio is browser-only
-const NextStudio = dynamic(
-  () => import("next-sanity/studio").then((mod) => mod.NextStudio),
-  { ssr: false, loading: () => <StudioLoader /> }
+// Lazy wrapper that imports both config and Studio together — fully client-only
+const StudioWithConfig = dynamic(
+  async () => {
+    const [{ NextStudio }, { default: config }] = await Promise.all([
+      import("next-sanity/studio"),
+      import("../../../../sanity.config"),
+    ]);
+    // Return a component that closes over both
+    function Studio() {
+      return <NextStudio config={config} />;
+    }
+    return Studio;
+  },
+  {
+    ssr: false,
+    loading: () => <StudioLoader />,
+  }
 );
 
 function StudioLoader() {
@@ -53,5 +66,5 @@ function StudioLoader() {
 }
 
 export default function StudioPage() {
-  return <NextStudio config={config} />;
+  return <StudioWithConfig />;
 }
