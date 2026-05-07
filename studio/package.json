@@ -6,7 +6,9 @@
     "dev": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "manage": "sanity manage"
+    "manage": "sanity manage",
+    "seed:dry-run": "sanity exec scripts/seed-pawmeals-demo-content.mjs -- --dry-run",
+    "seed": "sanity exec scripts/seed-pawmeals-demo-content.mjs --with-user-token"
   },
   "dependencies": {
     "react": "^19.2.5",
