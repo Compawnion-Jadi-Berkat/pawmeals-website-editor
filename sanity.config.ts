@@ -4,8 +4,9 @@
  * Project ID: lr00lxe1
  * Dataset: production
  *
- * Run locally:  pnpm sanity:dev  → http://localhost:3333
- * Deploy:       pnpm sanity:deploy
+ * Embedded locally through Next.js:  npm run dev  → http://localhost:3000/studio
+ * Standalone v5 deploy:             npm run sanity:deploy
+ * Legacy root v4 deploy:            npm run sanity:deploy:root-v4
  *
  * Content structure mirrors the UAT spec (WebsiteDevelopment.xlsx, Sheet 3):
  *   Singletons: Homepage, Catering Page, About Us, Vet Exclusive Page
@@ -21,6 +22,9 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 
 export default defineConfig({
+  // Required when Studio is embedded at /studio; without this Sanity can
+  // interpret /studio as an unknown tool route and show “tool not found”.
+  basePath: "/studio",
   name: "pawmeals-studio",
   title: "Pawmeals Studio",
 

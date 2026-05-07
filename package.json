@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "type-check": "tsc --noEmit",
     "sanity:dev": "sanity dev",
-    "sanity:deploy": "sanity deploy",
+    "sanity:deploy": "npm --prefix studio run deploy",
+    "sanity:deploy:root-v4": "sanity deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
