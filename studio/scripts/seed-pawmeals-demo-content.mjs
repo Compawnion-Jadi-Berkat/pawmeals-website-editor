@@ -104,7 +104,10 @@ async function uploadAssets() {
     uploaded[name] = await client.assets.upload('image', fs.createReadStream(filePath), {
       filename: item.file,
       title: item.title,
-      source: {name: item.credit},
+      source: {
+        id: `pawmeals-demo-${key(item.file)}`,
+        name: item.credit,
+      },
     })
   }
 
