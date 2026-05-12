@@ -8,13 +8,16 @@
     "deploy": "sanity deploy",
     "manage": "sanity manage",
     "seed:dry-run": "sanity exec scripts/seed-pawmeals-demo-content.mjs -- --dry-run",
-    "seed": "sanity exec scripts/seed-pawmeals-demo-content.mjs --with-user-token"
+    "seed": "sanity exec scripts/seed-pawmeals-demo-content.mjs --with-user-token",
+    "seed:locales:dry-run": "sanity exec scripts/seed-locales.mjs -- --dry-run",
+    "seed:locales": "sanity exec scripts/seed-locales.mjs --with-user-token"
   },
   "dependencies": {
+    "@sanity/document-internationalization": "^6.1.1",
+    "@sanity/vision": "^5.23.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "sanity": "^5.23.0",
-    "@sanity/vision": "^5.23.0",
     "styled-components": "^6.1.15"
   }
 }
