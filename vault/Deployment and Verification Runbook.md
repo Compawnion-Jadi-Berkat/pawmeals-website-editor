@@ -22,6 +22,13 @@ Production deploys are driven from the GitHub `main` branch to Vercel. A change 
 | Vercel deploy | Wait for the Vercel deployment linked to the commit. | Deployment status is ready/successful. |
 | Runtime check | Open `https://pawmeals-website-editor.vercel.app/en?after=<commit>`. | Browser shows main content, not only shell layout. |
 
+## Recent Verified Website Updates
+
+| Commit | Purpose | Local Validation |
+|---|---|---|
+| `104d30b` | Applied Pawmeals brand palette to frontend theme tokens and moved **Quiz** immediately after **Katering** in navigation. | `npm run type-check`, `npm run build`, local production route probes, and browser visual check. |
+| `a0736c9` | Added CMS navigation fallbacks and legacy route aliases for implemented public routes. | `npm run type-check`, `npm run build`, and local production route probes. |
+
 ## Useful Commands
 
 ```bash

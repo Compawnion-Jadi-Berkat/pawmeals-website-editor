@@ -37,10 +37,20 @@ The website generally follows this pattern: schema fields are defined in `sanity
 | Helper | Expected Return | Important Guard |
 |---|---|---|
 | `getHomepageContent(locale)` | Homepage singleton or `null` | Must be usable when at least one homepage section exists. |
-| `getSiteSettings()` | Site settings singleton or `null` | Navigation and footer should not rely on local hardcoded arrays. |
+| `getSiteSettings()` | Site settings singleton or `null` | Studio `navigation` and `footerLinks` remain preferred. The frontend may use a narrow structural fallback and route normalizer only when published settings are absent or contain legacy links; this guardrail must not become business content. |
 | `getProductCategories()` | Category array | Empty category list should not resurrect hardcoded filters. |
 | `getSanityProducts(locale)` | Product array mapped to `WebsiteProduct` | Product cards should render only Studio products. |
 | `getFeaturedSanityProducts(locale)` | Featured product array | Homepage featured products should render only Studio products. |
 | `getSanityProductByHandle(handle, locale)` | One mapped product or `null` | Detail page should 404 or empty-state rather than use fake product data. |
 
 > **Studio ownership rule:** if a user says “make everything connected to Studio,” the fix should connect schemas, queries, and components. It should not add static fallback catalogues, fake testimonials, or placeholder product images.
+
+## Navigation and Brand Guardrail
+
+The public site now has a deliberate presentation-layer guardrail in `src/lib/navigation.ts`. Its purpose is to keep global chrome usable when `siteSettings.navigation` is missing and to normalize older Studio-authored URL aliases to implemented routes. The guardrail also sorts the public menu so **Quiz** appears immediately after **Katering**, including for Sanity-provided navigation arrays.
+
+| Concern | Source of Truth | Guardrail File | Rule |
+|---|---|---|---|
+| Public menu labels and links | `siteSettings.navigation` | `src/lib/navigation.ts` | Use Studio data when present, normalize known legacy paths, and preserve **Katering → Quiz** ordering. |
+| Footer links | `siteSettings.footerLinks` | `src/lib/navigation.ts` | Use Studio data when present; fallback links are structural only. |
+| Brand palette and luxury styling | Frontend theme tokens | `src/app/globals.css`, `tailwind.config.ts`, `src/components/home/HeroCarousel.tsx` | Keep the Pawmeals guideline palette while preserving glass, gradient, and lens styling. |

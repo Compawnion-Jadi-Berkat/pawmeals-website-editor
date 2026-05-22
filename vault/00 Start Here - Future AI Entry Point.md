@@ -22,9 +22,11 @@ This note is the first context file for any future AI agent working on the Pawme
 
 ## Current Production-Fix Context
 
-The most recent successful fix is `e790f65 Fix public Sanity reads on production`. It changed public Sanity reads so the website no longer depends on a private `SANITY_API_TOKEN` for published content. It also preserves canonical fallback behavior for the Pawmeals Sanity project `lr00lxe1` and dataset `production`.
+The latest pushed website source change is `104d30b Apply Pawmeals brand palette and nav order`. It updates the frontend theme tokens to the Pawmeals external brand palette while preserving the existing luxury glass, lens, and gradient direction. It also enforces the public navigation order so **Quiz** appears immediately after **Katering**, including when navigation comes from Sanity `siteSettings`.
 
-> **Future AI instruction:** do not reintroduce hardcoded marketing/product fallback arrays to hide data problems. If Studio content is missing, add a clear empty-state or editor guidance where appropriate, but keep Sanity Studio as the source of truth for visible business content.
+The preceding routing resilience fix is `a0736c9 Fix CMS navigation fallbacks and legacy route aliases`. It adds a structural navigation/footer fallback for the narrow case where published `siteSettings` navigation is missing, and it normalizes legacy Studio-authored links such as `/vet-exclusive` and `/pawrenting` to implemented public routes. The earlier production Sanity-read fix is `e790f65 Fix public Sanity reads on production`, which made published reads independent from a private `SANITY_API_TOKEN` and preserved canonical fallback behavior for the Pawmeals Sanity project `lr00lxe1` and dataset `production`.
+
+> **Future AI instruction:** do not reintroduce hardcoded marketing/product fallback arrays to hide data problems. Structural UI guardrails such as navigation fallbacks and link normalization may exist only to keep global site chrome usable; product, page, testimonial, and campaign content must remain Studio-owned or show a clear empty state/editor guidance.
 
 ## Safe Workflow
 
@@ -32,7 +34,7 @@ The most recent successful fix is `e790f65 Fix public Sanity reads on production
 |---|---|---|
 | 1 | Read this note and [[AI Change Protocol]]. | You know the affected route, schema, query, and component. |
 | 2 | Inspect current files before editing. | No assumptions based only on past commits. |
-| 3 | Make the smallest change that preserves Studio ownership. | No fake products, placeholder hero slides, or hidden static content. |
+| 3 | Make the smallest change that preserves Studio ownership. | No fake products, placeholder hero slides, or hidden static content; structural navigation guardrails must stay separate from business content. |
 | 4 | Run `npm run type-check` and `npm run build`. | Both pass locally before committing. |
 | 5 | Push to GitHub `main` only after validation. | Vercel receives a verified change. |
 | 6 | Verify the live URL with a cache-busting query string. | Browser and HTML checks show content. |
