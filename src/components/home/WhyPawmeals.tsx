@@ -68,12 +68,12 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
 };
 
 const iconColors = [
-  "bg-pm-caramel/15 text-pm-caramel",
+  "bg-pm-caramel/15 text-pm-caramel-dark",
   "bg-pm-sage/15 text-pm-sage-dark",
-  "bg-red-50 text-red-500",
-  "bg-amber-50 text-amber-600",
-  "bg-green-50 text-green-600",
-  "bg-blue-50 text-blue-500",
+  "bg-pm-terracotta/12 text-pm-terracotta",
+  "bg-pm-gold/15 text-pm-brown",
+  "bg-pm-sage-light/25 text-pm-sage-dark",
+  "bg-pm-sand/45 text-pm-brown",
 ];
 
 export function WhyPawmeals({ locale, features }: WhyPawmealsProps) {
@@ -111,7 +111,7 @@ export function WhyPawmeals({ locale, features }: WhyPawmealsProps) {
             return (
               <div
                 key={index}
-                className="group p-6 rounded-2xl bg-pm-cream hover:bg-white hover:shadow-warm-lg border border-transparent hover:border-pm-sand/50 transition-all duration-300"
+                className="group p-6 rounded-3xl luxury-panel hover:bg-white hover:shadow-warm-lg transition-all duration-300"
               >
                 <div
                   className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${colorClass} transition-transform duration-300 group-hover:scale-110`}

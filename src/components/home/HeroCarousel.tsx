@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, Leaf, ShieldCheck, Sparkles, Stethoscope } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import { PLACEHOLDER_IMAGES } from "@/lib/placeholder-images";
 
@@ -22,32 +22,38 @@ interface HeroCarouselProps {
 
 const defaultSlides = (locale: Locale): HeroSlide[] => [
   {
-    headline: locale === "id" ? "Masakan Terbaik untuk Sahabat Berbulumu" : "The Best Cooking for Your Furry Friend",
+    headline: locale === "id" ? "Makanan Masak Premium untuk Sahabat Berbulumu" : "Premium Cooked Meals for Your Furry Companion",
     subheadline: locale === "id"
-      ? "Makanan masak alami, tanpa pengawet. Direkomendasikan oleh 220+ dokter hewan di seluruh Indonesia."
-      : "Natural cooked food, no preservatives. Recommended by 220+ vets across Indonesia.",
-    ctaText: locale === "id" ? "Temukan Produk" : "Explore Products",
+      ? "Resep segar, alami, dan vet-informed untuk membantu hewan peliharaan hidup lebih sehat setiap hari."
+      : "Fresh, natural, vet-informed recipes designed to help pets live healthier every day.",
+    ctaText: locale === "id" ? "Jelajahi Menu" : "Explore Menu",
     ctaLink: `/${locale}/products`,
     image: { asset: { url: PLACEHOLDER_IMAGES.hero1 }, alt: "Pawmeals premium cooked pet food" },
   },
   {
-    headline: locale === "id" ? "Temukan Makanan Sempurna untuk Anjingmu" : "Find the Perfect Food for Your Dog",
+    headline: locale === "id" ? "Temukan Formula yang Tepat dengan Kuis Nutrisi" : "Find the Right Formula with the Nutrition Quiz",
     subheadline: locale === "id"
-      ? "Ikuti kuis interaktif kami dan dapatkan rekomendasi personal berdasarkan ras, usia, dan kebutuhan kesehatan."
-      : "Take our interactive quiz and get personalized recommendations based on breed, age, and health needs.",
+      ? "Dapatkan rekomendasi berdasarkan usia, ras, berat badan, dan kebutuhan kesehatan hewanmu."
+      : "Get recommendations based on your pet's age, breed, weight, and health needs.",
     ctaText: locale === "id" ? "Mulai Kuis" : "Start Quiz",
     ctaLink: `/${locale}/quiz`,
     image: { asset: { url: PLACEHOLDER_IMAGES.hero2 }, alt: "Pawmeals fresh ingredients" },
   },
   {
-    headline: locale === "id" ? "Spesialis Makanan Masak #1 di Indonesia" : "Indonesia's #1 Cooked Food Specialist",
+    headline: locale === "id" ? "Dipercaya 220+ Klinik Dokter Hewan" : "Trusted by 220+ Veterinary Clinics",
     subheadline: locale === "id"
-      ? "Lebih dari 10.000 hewan peliharaan bahagia. Dikirim segar langsung ke pintu rumahmu."
-      : "Over 10,000 happy pets. Delivered fresh directly to your door.",
-    ctaText: locale === "id" ? "Langganan Sekarang" : "Subscribe Now",
-    ctaLink: `/${locale}/account/subscriptions`,
+      ? "Lebih dari 10.000 hewan menikmati makanan segar Pawmeals, dikirim langsung ke rumah."
+      : "More than 10,000 pets enjoy fresh Pawmeals recipes, delivered directly to their homes.",
+    ctaText: locale === "id" ? "Berlangganan" : "Subscribe",
+    ctaLink: `/${locale}/subscribe`,
     image: { asset: { url: PLACEHOLDER_IMAGES.hero3 }, alt: "Happy pet with Pawmeals food" },
   },
+];
+
+const trustBadges = (locale: Locale) => [
+  { icon: Stethoscope, text: locale === "id" ? "220+ Klinik Vet" : "220+ Vet Clinics" },
+  { icon: ShieldCheck, text: locale === "id" ? "10K+ Hewan Sehat" : "10K+ Healthy Pets" },
+  { icon: Leaf, text: locale === "id" ? "Tanpa Pengawet" : "No Preservatives" },
 ];
 
 export function HeroCarousel({ locale, slides }: HeroCarouselProps) {
@@ -65,19 +71,18 @@ export function HeroCarousel({ locale, slides }: HeroCarouselProps) {
 
   useEffect(() => {
     if (!isAutoPlaying) return;
-    const timer = setInterval(next, 5000);
+    const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
   }, [isAutoPlaying, next]);
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-pm-cream"
-      style={{ minHeight: "560px" }}
+      className="relative w-full overflow-hidden bg-[radial-gradient(circle_at_18%_18%,rgba(200,149,108,0.18),transparent_30%),linear-gradient(135deg,#FAF6F0_0%,#FFFDF8_48%,#F2EBE0_100%)]"
+      style={{ minHeight: "620px" }}
       aria-label="Hero carousel"
       onMouseEnter={() => setIsAutoPlaying(false)}
       onMouseLeave={() => setIsAutoPlaying(true)}
     >
-      {/* Slides */}
       {displaySlides.map((slide, index) => (
         <div
           key={index}
@@ -86,135 +91,118 @@ export function HeroCarousel({ locale, slides }: HeroCarouselProps) {
           }`}
           aria-hidden={index !== current}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 h-full min-h-[560px]">
-            {/* Left: Text content */}
-            <div className="flex flex-col justify-center px-8 py-16 lg:px-16 lg:py-20 bg-pm-cream">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 bg-pm-caramel/15 border border-pm-caramel/30 text-pm-caramel-dark rounded-pill px-4 py-1.5 text-label-sm font-bold uppercase tracking-wider mb-6 w-fit">
-                <span className="w-1.5 h-1.5 rounded-full bg-pm-caramel animate-pulse" />
-                {locale === "id" ? "Spesialis Makanan Masak" : "Cooked Food Specialist"}
+          <div className="container grid grid-cols-1 lg:grid-cols-[0.94fr_1.06fr] h-full min-h-[620px] items-center gap-10 py-12 lg:py-16">
+            <div className="relative z-10 flex flex-col justify-center max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-white/82 border border-pm-sand/70 text-pm-caramel-dark rounded-pill px-4 py-2 text-label-sm font-bold uppercase tracking-[0.18em] mb-6 w-fit shadow-warm-sm backdrop-blur-sm">
+                <Sparkles className="w-4 h-4" aria-hidden="true" />
+                {locale === "id" ? "Cooked Food Specialist" : "Cooked Food Specialist"}
               </div>
 
-              {/* Headline */}
-              <h1 className="font-heading text-4xl sm:text-5xl lg:text-5xl font-bold text-pm-brown leading-tight mb-5">
+              <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-pm-brown leading-[1.04] mb-5 max-w-[12ch]">
                 {slide.headline}
               </h1>
 
-              {/* Subheadline */}
-              <p className="text-pm-brown-light text-body-lg leading-relaxed mb-8 max-w-lg">
+              <p className="text-pm-brown-light text-body-lg leading-relaxed mb-8 max-w-xl">
                 {slide.subheadline}
               </p>
 
-              {/* CTAs */}
-              <div className="flex flex-wrap gap-3 mb-10">
-                <Link
-                  href={slide.ctaLink}
-                  className="btn-primary flex items-center gap-2 text-base px-7 py-3.5"
-                >
-                  {slide.ctaText}
-                  <ArrowRight className="w-4 h-4" />
+              <div className="flex flex-wrap gap-3 mb-9">
+                <Link href={slide.ctaLink} className="btn-primary px-7 py-3.5">
+                  {locale === "id" && /shop now/i.test(slide.ctaText) ? "Belanja Sekarang" : slide.ctaText}
+                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
-                <Link
-                  href={`/${locale}/quiz`}
-                  className="btn-secondary flex items-center gap-2 text-base px-7 py-3.5"
-                >
-                  {locale === "id" ? "Cari Tahu Kebutuhan Hewanmu" : "Find Your Pet's Needs"}
+                <Link href={`/${locale}/quiz`} className="btn-secondary bg-white/70 px-7 py-3.5 backdrop-blur-sm">
+                  {locale === "id" ? "Cek Kebutuhan Nutrisi" : "Check Nutrition Needs"}
                 </Link>
               </div>
 
-              {/* Trust badges */}
-              <div className="flex flex-wrap items-center gap-6">
-                {[
-                  { icon: "🏥", text: locale === "id" ? "220+ Klinik Vet" : "220+ Vet Clinics" },
-                  { icon: "🐾", text: locale === "id" ? "10K+ Hewan Bahagia" : "10K+ Happy Pets" },
-                  { icon: "🌿", text: locale === "id" ? "Tanpa Pengawet" : "No Preservatives" },
-                ].map((badge) => (
-                  <div
-                    key={badge.text}
-                    className="flex items-center gap-1.5 text-pm-brown/70 text-body-sm font-semibold"
-                  >
-                    <span>{badge.icon}</span>
-                    <span>{badge.text}</span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center gap-3">
+                {trustBadges(locale).map((badge) => {
+                  const Icon = badge.icon;
+                  return (
+                    <div key={badge.text} className="flex items-center gap-2 rounded-pill bg-white/75 border border-pm-sand/60 px-3.5 py-2 text-pm-brown/75 text-body-sm font-bold shadow-warm-sm backdrop-blur-sm">
+                      <Icon className="w-4 h-4 text-pm-caramel" aria-hidden="true" />
+                      <span>{badge.text}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Right: Image */}
-            <div className="relative hidden lg:block overflow-hidden">
-              {slide.image?.asset?.url ? (
-                <Image
-                  src={slide.image.asset.url}
-                  alt={slide.image.alt || slide.headline}
-                  fill
-                  className="object-cover object-center"
-                  priority={index === 0}
-                  sizes="50vw"
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-pm-caramel/20 to-pm-sand/40 flex items-center justify-center">
-                  <div className="text-pm-caramel/20 text-[200px] select-none">🐾</div>
+            <div className="relative hidden lg:block h-[520px]">
+              <div className="absolute inset-0 rounded-[2.5rem] bg-pm-caramel/12 rotate-3" />
+              <div className="relative h-full overflow-hidden rounded-[2.5rem] border border-white/70 shadow-warm-2xl bg-white">
+                {slide.image?.asset?.url ? (
+                  <Image
+                    src={slide.image.asset.url}
+                    alt={slide.image.alt || slide.headline}
+                    fill
+                    className="object-cover object-center"
+                    priority={index === 0}
+                    sizes="(max-width: 1024px) 100vw, 52vw"
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-pm-caramel/10 to-pm-sand/30 flex items-center justify-center">
+                    <Leaf className="w-24 h-24 text-pm-caramel/35" aria-hidden="true" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-pm-brown/28 via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 rounded-3xl bg-white/88 p-4 shadow-warm-md backdrop-blur-md border border-white/70">
+                  <p className="text-body-xs font-bold uppercase tracking-[0.18em] text-pm-caramel-dark mb-1">
+                    {locale === "id" ? "Fresh, warm, informed" : "Fresh, warm, informed"}
+                  </p>
+                  <p className="font-heading text-xl font-bold text-pm-brown">
+                    {locale === "id" ? "Nutrisi harian yang terasa homemade." : "Daily nutrition that feels homemade."}
+                  </p>
                 </div>
-              )}
-              {/* Subtle gradient overlay on image */}
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-pm-cream/10" />
+              </div>
             </div>
           </div>
 
-          {/* Mobile: show image as background with overlay */}
           <div className="lg:hidden absolute inset-0 -z-10">
             {slide.image?.asset?.url && (
-              <>
-                <Image
-                  src={slide.image.asset.url}
-                  alt={slide.image.alt || slide.headline}
-                  fill
-                  className="object-cover object-center opacity-15"
-                  priority={index === 0}
-                  sizes="100vw"
-                />
-              </>
+              <Image
+                src={slide.image.asset.url}
+                alt={slide.image.alt || slide.headline}
+                fill
+                className="object-cover object-center opacity-10"
+                priority={index === 0}
+                sizes="100vw"
+              />
             )}
           </div>
         </div>
       ))}
 
-      {/* Navigation Arrows */}
       {displaySlides.length > 1 && (
-        <>
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3 rounded-pill bg-white/82 border border-pm-sand/60 p-2 shadow-warm-md backdrop-blur-md">
           <button
             onClick={prev}
-            className="absolute left-4 bottom-8 z-20 w-10 h-10 rounded-full bg-white/90 shadow-warm-md flex items-center justify-center text-pm-brown hover:bg-white hover:shadow-warm-lg transition-all duration-200"
+            className="w-10 h-10 rounded-full bg-white shadow-warm-sm flex items-center justify-center text-pm-brown hover:bg-pm-cream-dark transition-all duration-200 cursor-pointer"
             aria-label="Previous slide"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
+          <div className="flex items-center gap-2 px-1">
+            {displaySlides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrent(index)}
+                className={`rounded-full transition-all duration-300 cursor-pointer ${
+                  index === current ? "w-7 h-2.5 bg-pm-caramel" : "w-2.5 h-2.5 bg-pm-brown/25 hover:bg-pm-brown/45"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={index === current ? "true" : undefined}
+              />
+            ))}
+          </div>
           <button
             onClick={next}
-            className="absolute left-16 bottom-8 z-20 w-10 h-10 rounded-full bg-white/90 shadow-warm-md flex items-center justify-center text-pm-brown hover:bg-white hover:shadow-warm-lg transition-all duration-200"
+            className="w-10 h-10 rounded-full bg-white shadow-warm-sm flex items-center justify-center text-pm-brown hover:bg-pm-cream-dark transition-all duration-200 cursor-pointer"
             aria-label="Next slide"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
-        </>
-      )}
-
-      {/* Dot Indicators */}
-      {displaySlides.length > 1 && (
-        <div className="absolute bottom-9 left-28 z-20 flex items-center gap-2">
-          {displaySlides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrent(index)}
-              className={`rounded-full transition-all duration-300 ${
-                index === current
-                  ? "w-6 h-2.5 bg-pm-caramel"
-                  : "w-2.5 h-2.5 bg-pm-brown/30 hover:bg-pm-brown/50"
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={index === current ? "true" : undefined}
-            />
-          ))}
         </div>
       )}
     </section>

@@ -2,8 +2,6 @@
    Pawmeals globals.css (IP by Eddie Amintohir)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -41,8 +39,8 @@
   --color-error:        #B4452C;
 
   /* Typography */
-  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
-  --font-body:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-heading), 'Varela Round', system-ui, sans-serif;
+  --font-sans:    var(--font-body), 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* Type scale (clamped, fluid) */
   --fs-display-xl: clamp(2.75rem, 1.6rem + 4.8vw, 4.75rem); /* hero */
@@ -100,7 +98,7 @@
   }
 
   body {
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
     font-size: var(--fs-body);
     line-height: 1.6;
     background-color: var(--color-bg);
@@ -152,11 +150,12 @@
   }
 
   .section { padding-block: var(--section-py); }
+  .section-padding { padding-block: var(--section-py); }
 
   /* Section labels â€” fixed: legible size + proper contrast */
   .section-eyebrow {
     display: inline-block;
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
     font-size: 0.875rem;          /* up from ~11px */
     font-weight: 700;
     letter-spacing: 0.18em;
@@ -184,7 +183,7 @@
     display: inline-flex; align-items: center; justify-content: center;
     gap: var(--space-2);
     padding: 0.875rem 1.75rem;
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
     font-size: var(--fs-body);
     font-weight: 600;
     border-radius: var(--radius-pill);
@@ -201,6 +200,20 @@
   .btn-lg { padding: 1.05rem 2.25rem; font-size: var(--fs-body-lg); }
 
   .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: var(--space-2);
+    padding: 0.875rem 1.75rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid transparent;
+    transition: transform var(--t-base) var(--ease-out),
+                background-color var(--t-base) var(--ease-out),
+                box-shadow var(--t-base) var(--ease-out),
+                color var(--t-base) var(--ease-out);
+    white-space: nowrap;
+    line-height: 1;
     background-color: var(--color-accent);
     color: #FFFFFF;
     box-shadow: var(--shadow-cta);
@@ -209,6 +222,20 @@
   .btn-primary:active { transform: translateY(0); }
 
   .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: var(--space-2);
+    padding: 0.875rem 1.75rem;
+    font-family: var(--font-sans);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid transparent;
+    transition: transform var(--t-base) var(--ease-out),
+                background-color var(--t-base) var(--ease-out),
+                box-shadow var(--t-base) var(--ease-out),
+                color var(--t-base) var(--ease-out);
+    white-space: nowrap;
+    line-height: 1;
     background-color: transparent;
     color: var(--color-primary);
     border-color: var(--color-primary);
@@ -320,7 +347,11 @@
   }
 
   .scroll-mt-nav { scroll-margin-top: var(--nav-height); }
+  .text-label-md { font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.08em; }
+  .text-body-xs { font-size: 0.75rem; line-height: 1.45; }
+  .luxury-panel { background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,246,240,0.88)); border: 1px solid rgba(232,213,183,0.58); box-shadow: var(--shadow-md); }
 }
+
 
 /* SCROLLBAR  */
 ::-webkit-scrollbar { width: 8px; height: 8px; }

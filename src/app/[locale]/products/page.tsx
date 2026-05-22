@@ -58,23 +58,27 @@ export default async function ProductsPage({
       <BreadcrumbSchema items={breadcrumbs} />
 
       {/* Page Header */}
-      <div className="bg-white border-b border-pm-sand/50">
-        <div className="container py-10">
-          <p className="text-pm-caramel font-bold text-label-md uppercase tracking-widest mb-2">
-            {locale === "id" ? "Katalog Produk" : "Product Catalogue"}
-          </p>
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-pm-brown mb-3">
-            {locale === "id" ? "Semua Produk Pawmeals" : "All Pawmeals Products"}
-          </h1>
-          <p className="text-pm-brown/70 text-body-lg max-w-2xl">
-            {locale === "id"
-              ? "12 varian makanan masak alami untuk anjing dan kucing. Tanpa pengawet, direkomendasikan dokter hewan."
-              : "12 variants of natural cooked food for dogs and cats. No preservatives, vet recommended."}
-          </p>
+      <div className="relative overflow-hidden border-b border-pm-sand/60 bg-gradient-to-br from-pm-ivory via-white to-pm-cream/70">
+        <div className="absolute -right-20 -top-24 h-64 w-64 rounded-full bg-pm-gold/20 blur-3xl" aria-hidden="true" />
+        <div className="absolute left-8 top-10 h-24 w-24 rounded-full border border-pm-gold/20" aria-hidden="true" />
+        <div className="container relative py-14 lg:py-18">
+          <div className="max-w-3xl">
+            <p className="mb-3 inline-flex rounded-full border border-pm-gold/30 bg-white/75 px-4 py-2 text-label-sm font-bold uppercase tracking-[0.24em] text-pm-caramel shadow-soft">
+              {locale === "id" ? "Katalog Kurasi" : "Curated Catalogue"}
+            </p>
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-pm-brown mb-5">
+              {locale === "id" ? "Semua Produk Pawmeals" : "All Pawmeals Products"}
+            </h1>
+            <p className="text-pm-brown/72 text-body-lg leading-relaxed max-w-2xl">
+              {locale === "id"
+                ? "Pilihan makanan masak alami untuk anjing dan kucing, dikurasi dengan bahan asli, tanpa pengawet, dan diarahkan untuk rutinitas makan yang lebih tenang."
+                : "A refined selection of naturally cooked meals for dogs and cats, curated with real ingredients, no preservatives, and a calmer daily feeding ritual."}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="container py-8">
+      <div className="container py-10 lg:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">
