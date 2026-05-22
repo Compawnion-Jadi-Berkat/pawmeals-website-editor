@@ -1,34 +1,29 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { ShoppingBag, Menu, X, Globe, ChevronDown, Sparkles } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import type { Locale } from "@/lib/i18n/config";
 import { localeNames } from "@/lib/i18n/config";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import type { SiteNavItem, SiteSettingsContent } from "@/types/site-content";
 
 interface NavbarProps {
   locale: Locale;
+  siteSettings?: SiteSettingsContent | null;
 }
 
-const primaryNavLinks = (locale: Locale) => [
-  { href: `/${locale}/products`, labelKey: "products" },
-  { href: `/${locale}/quiz`, labelKey: "quiz" },
-  { href: `/${locale}/vet`, labelKey: "vet" },
-  { href: `/${locale}/about`, labelKey: "about" },
-];
+function withLocalePrefix(href: string, locale: Locale) {
+  if (!href) return `/${locale}`;
+  if (href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:")) return href;
+  if (href === "/") return `/${locale}`;
+  if (href.startsWith(`/${locale}/`) || href === `/${locale}`) return href;
+  return `/${locale}${href.startsWith("/") ? href : `/${href}`}`;
+}
 
-const secondaryNavLinks = (locale: Locale) => [
-  { href: `/${locale}/catering`, labelKey: "catering" },
-  { href: `/${locale}/blog`, labelKey: "blog" },
-  { href: `/${locale}/faqs`, labelKey: "faqs" },
-];
-
-export function Navbar({ locale }: NavbarProps) {
-  const t = useTranslations("nav");
+export function Navbar({ locale, siteSettings }: NavbarProps) {
   const { totalQuantity, toggleCart } = useCart();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -47,10 +42,22 @@ export function Navbar({ locale }: NavbarProps) {
     setIsMoreOpen(false);
   }, [pathname]);
 
+  const navItems = useMemo<SiteNavItem[]>(
+    () =>
+      (siteSettings?.navItems || [])
+        .filter((item) => item?.label && item?.href)
+        .map((item) => ({ label: item.label, href: withLocalePrefix(item.href, locale) })),
+    [locale, siteSettings?.navItems]
+  );
+
+  const primaryLinks = navItems.slice(0, 4);
+  const secondaryLinks = navItems.slice(4);
+  const allMobileLinks = navItems;
+  const brandName = siteSettings?.brandName || "Pawmeals";
+  const tagline = siteSettings?.tagline;
   const otherLocale: Locale = locale === "id" ? "en" : "id";
   const safePath = pathname ?? "/";
   const otherLocalePath = safePath.replace(`/${locale}`, `/${otherLocale}`);
-  const allMobileLinks = [...primaryNavLinks(locale), ...secondaryNavLinks(locale)];
   const localeShortLabels: Record<Locale, string> = { id: "ID", en: "EN" };
 
   return (
@@ -64,52 +71,56 @@ export function Navbar({ locale }: NavbarProps) {
         style={{ height: "var(--nav-height)" }}
       >
         <div className="container h-full flex items-center justify-between gap-4">
-          <Link href={`/${locale}`} className="flex items-center gap-2.5 flex-shrink-0 group" aria-label="Pawmeals — Home">
+          <Link href={`/${locale}`} className="flex items-center gap-2.5 flex-shrink-0 group" aria-label={`${brandName} — Home`}>
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pm-brown to-pm-caramel flex items-center justify-center shadow-warm-md group-hover:shadow-warm-lg transition-all duration-300 group-hover:-translate-y-0.5">
               <Sparkles className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
             <div className="hidden sm:block leading-none">
-              <span className="font-heading font-bold text-xl text-pm-brown block">Pawmeals</span>
-              <span className="text-[0.62rem] uppercase tracking-[0.18em] font-bold text-pm-caramel-dark">Cooked Pet Nutrition</span>
+              <span className="font-heading font-bold text-xl text-pm-brown block">{brandName}</span>
+              {tagline && <span className="text-[0.62rem] uppercase tracking-[0.18em] font-bold text-pm-caramel-dark">{tagline}</span>}
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-1 rounded-pill bg-white/68 border border-pm-sand/45 p-1 shadow-warm-sm" aria-label="Main navigation">
-            {primaryNavLinks(locale).map((link) => {
-              const isActive = safePath === link.href || safePath.startsWith(link.href + "/");
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-4 py-2 rounded-pill text-body-sm font-bold transition-all duration-200 ${
-                    isActive ? "text-white bg-pm-brown shadow-warm-sm" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
-                  }`}
-                >
-                  {t(link.labelKey)}
-                </Link>
-              );
-            })}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsMoreOpen(!isMoreOpen)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-pill text-body-sm font-bold text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream transition-all duration-200 cursor-pointer"
-                aria-expanded={isMoreOpen}
-              >
-                {locale === "id" ? "Lainnya" : "More"}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`} />
-              </button>
-              {isMoreOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-warm-lg border border-pm-sand/50 overflow-hidden min-w-[180px] animate-scale-in p-1">
-                  {secondaryNavLinks(locale).map((link) => (
-                    <Link key={link.href} href={link.href} className="block px-4 py-2.5 rounded-xl text-body-sm font-bold text-pm-brown hover:bg-pm-cream hover:text-pm-caramel-dark transition-colors">
-                      {t(link.labelKey)}
-                    </Link>
-                  ))}
+          {navItems.length > 0 && (
+            <nav className="hidden lg:flex items-center gap-1 rounded-pill bg-white/68 border border-pm-sand/45 p-1 shadow-warm-sm" aria-label="Main navigation">
+              {primaryLinks.map((link) => {
+                const isActive = safePath === link.href || safePath.startsWith(link.href + "/");
+                return (
+                  <Link
+                    key={`${link.href}-${link.label}`}
+                    href={link.href}
+                    className={`px-4 py-2 rounded-pill text-body-sm font-bold transition-all duration-200 ${
+                      isActive ? "text-white bg-pm-brown shadow-warm-sm" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              {secondaryLinks.length > 0 && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsMoreOpen(!isMoreOpen)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-pill text-body-sm font-bold text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream transition-all duration-200 cursor-pointer"
+                    aria-expanded={isMoreOpen}
+                  >
+                    {locale === "id" ? "Lainnya" : "More"}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {isMoreOpen && (
+                    <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-warm-lg border border-pm-sand/50 overflow-hidden min-w-[180px] animate-scale-in p-1">
+                      {secondaryLinks.map((link) => (
+                        <Link key={`${link.href}-${link.label}`} href={link.href} className="block px-4 py-2.5 rounded-xl text-body-sm font-bold text-pm-brown hover:bg-pm-cream hover:text-pm-caramel-dark transition-colors">
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
-            </div>
-          </nav>
+            </nav>
+          )}
 
           <div className="flex items-center gap-2">
             <div className="relative hidden sm:block">
@@ -158,32 +169,34 @@ export function Navbar({ locale }: NavbarProps) {
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden flex items-center justify-center w-11 h-11 rounded-2xl text-pm-brown bg-white/70 hover:bg-white transition-all duration-200 cursor-pointer"
-              aria-label={isMobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileOpen}
-            >
-              {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {allMobileLinks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="lg:hidden flex items-center justify-center w-11 h-11 rounded-2xl text-pm-brown bg-white/70 hover:bg-white transition-all duration-200 cursor-pointer"
+                aria-label={isMobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileOpen}
+              >
+                {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            )}
           </div>
         </div>
 
-        {isMobileOpen && (
+        {isMobileOpen && allMobileLinks.length > 0 && (
           <div className="lg:hidden bg-white border-t border-pm-sand/50 shadow-warm-lg animate-fade-in">
             <nav className="container py-4 flex flex-col gap-1" aria-label="Mobile navigation">
               {allMobileLinks.map((link) => {
                 const isActive = safePath === link.href;
                 return (
                   <Link
-                    key={link.href}
+                    key={`${link.href}-${link.label}`}
                     href={link.href}
                     className={`px-4 py-3 rounded-xl text-body-md font-bold transition-all duration-200 ${
                       isActive ? "text-white bg-pm-brown" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
                     }`}
                   >
-                    {t(link.labelKey)}
+                    {link.label}
                   </Link>
                 );
               })}

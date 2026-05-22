@@ -7,6 +7,7 @@ import { CartProvider } from "@/components/cart/CartProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { GoogleTagManager } from "@/components/analytics/GoogleTagManager";
+import { getSiteSettings } from "@/lib/sanity/client";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
 import { TikTokPixel } from "@/components/analytics/TikTokPixel";
 import { OrganizationSchema } from "@/components/seo/OrganizationSchema";
@@ -113,7 +114,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const messages = await getMessages({ locale });
+  const [messages, siteSettings] = await Promise.all([
+    getMessages({ locale }),
+    getSiteSettings().catch(() => null),
+  ]);
 
   return (
     <html lang={locale} className={`${varelaRound.variable} ${nunitoSans.variable}`}>
@@ -135,7 +139,7 @@ export default async function LocaleLayout({
       </head>
       <body className="bg-pm-cream text-pm-brown antialiased">
         {/* AEO: Organization Structured Data */}
-        <OrganizationSchema locale={locale} />
+        <OrganizationSchema locale={locale} siteSettings={siteSettings} />
 
         <NextIntlClientProvider locale={locale} messages={messages}>
           <CartProvider>
@@ -147,13 +151,13 @@ export default async function LocaleLayout({
               {locale === "id" ? "Lewati ke konten utama" : "Skip to main content"}
             </a>
 
-            <Navbar locale={locale} />
+            <Navbar locale={locale} siteSettings={siteSettings} />
 
             <main id="main-content" className="pt-[var(--nav-height)]">
               {children}
             </main>
 
-            <Footer locale={locale} />
+            <Footer locale={locale} siteSettings={siteSettings} />
           </CartProvider>
         </NextIntlClientProvider>
 

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { getAllProducts } from "@/lib/shopify";
+import { getProductCategories, getSanityProducts } from "@/lib/sanity/client";
 import { ProductsGrid } from "@/components/products/ProductsGrid";
 import { ProductFilters } from "@/components/products/ProductFilters";
 import { BreadcrumbSchema } from "@/components/seo/OrganizationSchema";
 import type { Locale } from "@/lib/i18n/config";
+import type { WebsiteProduct } from "@/types/site-content";
 
 export const dynamic = "force-dynamic";
 
@@ -37,12 +38,14 @@ export default async function ProductsPage({
   const { locale } = await params;
   const { type, sort } = await searchParams;
 
-  const productsData = await getAllProducts().catch(() => ({ products: [] }));
-  const allProducts = productsData.products ?? [];
+  const [allProducts, categories] = await Promise.all([
+    getSanityProducts(locale).catch(() => []),
+    getProductCategories().catch(() => []),
+  ]);
 
   // Filter by type
   const filtered = type
-    ? allProducts.filter((p) => p.tags?.includes(type))
+    ? allProducts.filter((p: WebsiteProduct) => p.category?.slug === type || p.tags?.includes(type))
     : allProducts;
 
   const breadcrumbs = [
@@ -82,7 +85,7 @@ export default async function ProductsPage({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Filters Sidebar */}
           <aside className="lg:w-64 flex-shrink-0">
-            <ProductFilters locale={locale} activeType={type} />
+            <ProductFilters locale={locale} activeType={type} categories={categories} />
           </aside>
 
           {/* Products Grid */}

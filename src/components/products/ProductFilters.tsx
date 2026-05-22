@@ -4,10 +4,12 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { Bone, Cat, Dog, Dumbbell, Leaf, Scale, ShieldCheck, Sparkles, Stethoscope, Trophy } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
+import type { ProductCategoryContent } from "@/types/site-content";
 
 interface ProductFiltersProps {
   locale: Locale;
   activeType?: string;
+  categories: ProductCategoryContent[];
 }
 
 const iconMap = {
@@ -23,21 +25,24 @@ const iconMap = {
   sensitive: Leaf,
 } as const;
 
-export function ProductFilters({ locale, activeType }: ProductFiltersProps) {
+type IconKey = keyof typeof iconMap;
+
+function resolveIcon(icon?: string): IconKey {
+  if (icon && icon in iconMap) return icon as IconKey;
+  return "all";
+}
+
+export function ProductFilters({ locale, activeType, categories }: ProductFiltersProps) {
   const router = useRouter();
 
-  const categories = [
-    { value: "", label: locale === "id" ? "Semua Produk" : "All Products", icon: "all" },
-    { value: "dog", label: locale === "id" ? "Makanan Anjing" : "Dog Food", icon: "dog" },
-    { value: "cat", label: locale === "id" ? "Makanan Kucing" : "Cat Food", icon: "cat" },
-    { value: "puppy", label: locale === "id" ? "Anak Anjing" : "Puppy", icon: "puppy" },
-    { value: "kitten", label: locale === "id" ? "Anak Kucing" : "Kitten", icon: "kitten" },
-    { value: "senior", label: locale === "id" ? "Senior" : "Senior", icon: "senior" },
-    { value: "wellness", label: locale === "id" ? "Kesehatan Umum" : "Wellness", icon: "wellness" },
-    { value: "joint", label: locale === "id" ? "Kesehatan Sendi" : "Joint Health", icon: "joint" },
-    { value: "weight", label: locale === "id" ? "Berat Badan" : "Weight Mgmt", icon: "weight" },
-    { value: "sensitive", label: locale === "id" ? "Pencernaan Sensitif" : "Sensitive", icon: "sensitive" },
-  ] as const;
+  const filterItems = [
+    { value: "", label: locale === "id" ? "Semua Produk" : "All Products", icon: "all" as IconKey },
+    ...categories.map((category) => ({
+      value: category.slug,
+      label: category.title,
+      icon: resolveIcon(category.icon),
+    })),
+  ];
 
   const handleFilter = (value: string) => {
     const params = new URLSearchParams();
@@ -61,7 +66,7 @@ export function ProductFilters({ locale, activeType }: ProductFiltersProps) {
         </div>
       </div>
       <div className="space-y-1.5">
-        {categories.map((cat) => {
+        {filterItems.map((cat) => {
           const Icon = iconMap[cat.icon];
           const isActive = (activeType ?? "") === cat.value;
           return (

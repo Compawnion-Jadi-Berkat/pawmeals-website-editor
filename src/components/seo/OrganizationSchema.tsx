@@ -1,81 +1,74 @@
 import type { Locale } from "@/lib/i18n/config";
+import type { SiteSettingsContent } from "@/types/site-content";
 
 interface OrganizationSchemaProps {
   locale: Locale;
+  siteSettings?: SiteSettingsContent | null;
 }
 
-export function OrganizationSchema({ locale }: OrganizationSchemaProps) {
+export function OrganizationSchema({ locale, siteSettings }: OrganizationSchemaProps) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://pawmeals.com";
+  const brandName = siteSettings?.brandName || "Pawmeals";
+  const sameAs = [
+    ...(siteSettings?.socials?.map((social) => social.url).filter(Boolean) ?? []),
+    siteSettings?.whatsappNumber ? `https://wa.me/${siteSettings.whatsappNumber.replace(/[^0-9]/g, "")}` : undefined,
+  ].filter(Boolean);
+  const offerItems = siteSettings?.navItems
+    ?.filter((item) => item.href?.includes("products") || item.href?.includes("catering") || item.href?.includes("vet"))
+    .map((item) => ({
+      "@type": "OfferCatalog",
+      name: item.label,
+      url: item.href.startsWith("http") ? item.href : `${siteUrl}${item.href}`,
+    }));
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://pawmeals.com/#organization",
-    name: "Pawmeals",
-    alternateName: "Pawmeals Indonesia",
-    url: "https://pawmeals.com",
-    logo: {
-      "@type": "ImageObject",
-      url: "https://pawmeals.com/logo.png",
-      width: 200,
-      height: 200,
-    },
-    description:
-      locale === "id"
-        ? "Pawmeals adalah spesialis makanan hewan peliharaan masak pertama di Indonesia. Makanan alami, tanpa pengawet, direkomendasikan oleh lebih dari 220 klinik dokter hewan."
-        : "Pawmeals is Indonesia's first cooked pet food specialist. Natural, preservative-free food recommended by over 220 veterinary clinics.",
-    foundingDate: "2022",
-    foundingLocation: {
-      "@type": "Place",
-      addressCountry: "ID",
-      addressLocality: "Jakarta",
-    },
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "ID",
-      addressLocality: "Jakarta",
-      addressRegion: "DKI Jakarta",
-    },
+    "@id": `${siteUrl}/#organization`,
+    name: brandName,
+    alternateName: brandName,
+    url: siteUrl,
+    logo: siteSettings?.logo?.asset?.url
+      ? {
+          "@type": "ImageObject",
+          url: siteSettings.logo.asset.url,
+        }
+      : undefined,
+    description: siteSettings?.tagline,
+    foundingLocation: siteSettings?.location
+      ? {
+          "@type": "Place",
+          name: siteSettings.location,
+          addressCountry: "ID",
+        }
+      : undefined,
+    address: siteSettings?.location
+      ? {
+          "@type": "PostalAddress",
+          addressCountry: "ID",
+          streetAddress: siteSettings.location,
+        }
+      : undefined,
     contactPoint: [
       {
         "@type": "ContactPoint",
         contactType: "customer service",
-        availableLanguage: ["Indonesian", "English"],
-        contactOption: "TollFree",
+        availableLanguage: locale === "id" ? ["Indonesian", "English"] : ["English", "Indonesian"],
+        telephone: siteSettings?.phone,
+        email: siteSettings?.email,
       },
-    ],
-    sameAs: [
-      "https://instagram.com/pawmeals",
-      "https://tiktok.com/@pawmeals",
-      "https://wa.me/6281234567890",
-    ],
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: locale === "id" ? "Katalog Produk Pawmeals" : "Pawmeals Product Catalogue",
-      itemListElement: [
-        {
+    ].filter((point) => point.telephone || point.email),
+    sameAs,
+    hasOfferCatalog: offerItems?.length
+      ? {
           "@type": "OfferCatalog",
-          name: locale === "id" ? "Makanan Anjing" : "Dog Food",
-          url: `https://pawmeals.com/${locale}/products?type=dog`,
-        },
-        {
-          "@type": "OfferCatalog",
-          name: locale === "id" ? "Makanan Kucing" : "Cat Food",
-          url: `https://pawmeals.com/${locale}/products?type=cat`,
-        },
-        {
-          "@type": "OfferCatalog",
-          name: "Pawmeals Catering",
-          url: `https://pawmeals.com/${locale}/catering`,
-        },
-      ],
-    },
+          name: `${brandName} Catalogue`,
+          itemListElement: offerItems,
+        }
+      : undefined,
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }} />;
 }
 
 // ─── PRODUCT SCHEMA ───────────────────────────────────────────────────────────
@@ -83,18 +76,20 @@ export function OrganizationSchema({ locale }: OrganizationSchemaProps) {
 interface ProductSchemaProps {
   product: {
     title: string;
-    description: string;
+    description?: string;
     handle: string;
     priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
     featuredImage?: { url: string; altText?: string | null } | null;
-    variants: { edges: { node: { availableForSale: boolean; sku?: string | null } }[] };
-    vendor: string;
+    variants?: { edges: { node: { availableForSale: boolean; sku?: string | null } }[] };
+    vendor?: string;
     tags?: string[];
+    category?: { title?: string } | null;
   };
   locale: string;
 }
 
 export function ProductSchema({ product, locale }: ProductSchemaProps) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://pawmeals.com";
   const variant = product.variants?.edges?.[0]?.node;
   const isAvailable = variant?.availableForSale ?? true;
 
@@ -102,48 +97,29 @@ export function ProductSchema({ product, locale }: ProductSchemaProps) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
-    description: product.description,
-    url: `https://pawmeals.com/${locale}/products/${product.handle}`,
+    description: product.description || product.title,
+    url: `${siteUrl}/${locale}/products/${product.handle}`,
     image: product.featuredImage?.url,
     brand: {
       "@type": "Brand",
-      name: "Pawmeals",
+      name: product.vendor || "Pawmeals",
     },
     sku: variant?.sku,
     offers: {
       "@type": "Offer",
       priceCurrency: product.priceRange.minVariantPrice.currencyCode,
       price: product.priceRange.minVariantPrice.amount,
-      availability: isAvailable
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability: isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       seller: {
         "@type": "Organization",
-        name: "Pawmeals",
+        name: product.vendor || "Pawmeals",
       },
-      url: `https://pawmeals.com/${locale}/products/${product.handle}`,
+      url: `${siteUrl}/${locale}/products/${product.handle}`,
     },
-    category: product.tags?.includes("dog") ? "Dog Food" : "Cat Food",
-    additionalProperty: [
-      {
-        "@type": "PropertyValue",
-        name: "Preservative Free",
-        value: "true",
-      },
-      {
-        "@type": "PropertyValue",
-        name: "Natural Ingredients",
-        value: "true",
-      },
-    ],
+    category: product.category?.title || product.tags?.[0],
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }} />;
 }
 
 // ─── FAQ SCHEMA ───────────────────────────────────────────────────────────────
@@ -166,12 +142,7 @@ export function FAQSchema({ faqs }: FAQSchemaProps) {
     })),
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }} />;
 }
 
 // ─── ARTICLE SCHEMA ───────────────────────────────────────────────────────────
@@ -189,6 +160,7 @@ interface ArticleSchemaProps {
 }
 
 export function ArticleSchema({ article, locale }: ArticleSchemaProps) {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://pawmeals.com";
   const schema = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -196,7 +168,7 @@ export function ArticleSchema({ article, locale }: ArticleSchemaProps) {
     description: article.excerpt,
     datePublished: article.publishedAt,
     dateModified: article.publishedAt,
-    url: `https://pawmeals.com/${locale}/blog/${article.slug.current}`,
+    url: `${siteUrl}/${locale}/blog/${article.slug.current}`,
     image: article.featuredImage?.asset?.url,
     author: {
       "@type": "Person",
@@ -206,24 +178,15 @@ export function ArticleSchema({ article, locale }: ArticleSchemaProps) {
     publisher: {
       "@type": "Organization",
       name: "Pawmeals",
-      logo: {
-        "@type": "ImageObject",
-        url: "https://pawmeals.com/logo.png",
-      },
     },
     isPartOf: {
       "@type": "WebSite",
       name: "Pawmeals",
-      url: "https://pawmeals.com",
+      url: siteUrl,
     },
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }} />;
 }
 
 // ─── BREADCRUMB SCHEMA ────────────────────────────────────────────────────────
@@ -244,13 +207,7 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
     })),
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }}
-    />
-  );
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema, null, 2) }} />;
 }
 
-// Alias export for FAQPageSchema
 export const FAQPageSchema = FAQSchema;

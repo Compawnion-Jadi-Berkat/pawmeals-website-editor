@@ -3,38 +3,39 @@ import Image from "next/image";
 import { ArrowRight, Award, Cat, Dog, ShoppingBag, Sparkles, Star } from "lucide-react";
 import { formatPrice } from "@/lib/shopify";
 import type { Locale } from "@/lib/i18n/config";
-import type { ShopifyProduct } from "@/types/shopify";
-import { getProductPlaceholder } from "@/lib/placeholder-images";
+import type { WebsiteProduct } from "@/types/site-content";
 
 interface ProductsGridProps {
   locale: Locale;
-  products: ShopifyProduct[];
+  products: WebsiteProduct[];
   sort?: string;
 }
 
-const PLACEHOLDER_PRODUCTS = [
-  { id: "1",  title: "Clucky Chicky",       handle: "clucky-chicky",       description: "Cooked chicken — balanced daily nutrition for adult dogs",       priceRange: { minVariantPrice: { amount: "75000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Clucky Chicky"),       altText: "Pawmeals Clucky Chicky" },       tags: ["dog", "chicken"], variants: { edges: [{ node: { id: "v1",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "2",  title: "Beefy Buddy",         handle: "beefy-buddy",         description: "Cooked beef — rich in protein for strong muscles",               priceRange: { minVariantPrice: { amount: "80000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Beefy Buddy"),         altText: "Pawmeals Beefy Buddy" },         tags: ["dog", "beef"],    variants: { edges: [{ node: { id: "v2",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "3",  title: "Fishy Frenzy",        handle: "fishy-frenzy",        description: "Cooked fish — omega-3 for healthy skin and shiny coat",          priceRange: { minVariantPrice: { amount: "78000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Fishy Frenzy"),        altText: "Pawmeals Fishy Frenzy" },        tags: ["dog", "fish"],    variants: { edges: [{ node: { id: "v3",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "4",  title: "Perky Porky",         handle: "perky-porky",         description: "Cooked pork — flavourful and highly digestible",               priceRange: { minVariantPrice: { amount: "82000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Perky Porky"),         altText: "Pawmeals Perky Porky" },         tags: ["dog", "pork"],    variants: { edges: [{ node: { id: "v4",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "5",  title: "Goat Goodness",       handle: "goat-goodness",       description: "Cooked goat — hypoallergenic protein for sensitive dogs",       priceRange: { minVariantPrice: { amount: "85000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Goat Goodness"),       altText: "Pawmeals Goat Goodness" },       tags: ["dog", "goat"],    variants: { edges: [{ node: { id: "v5",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "6",  title: "Bon Rabbetit",        handle: "bon-rabbetit",        description: "Cooked rabbit — lean protein, ideal for weight management",    priceRange: { minVariantPrice: { amount: "86000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Bon Rabbetit"),        altText: "Pawmeals Bon Rabbetit" },        tags: ["dog", "rabbit"],  variants: { edges: [{ node: { id: "v6",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "7",  title: "La La Lamb",          handle: "la-la-lamb",          description: "Cooked lamb — rich in zinc and iron for vitality",            priceRange: { minVariantPrice: { amount: "85000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("La La Lamb"),          altText: "Pawmeals La La Lamb" },          tags: ["dog", "lamb"],    variants: { edges: [{ node: { id: "v7",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "8",  title: "Duck Delish",         handle: "duck-delish",         description: "Cooked duck — novel protein, great for allergy-prone dogs",   priceRange: { minVariantPrice: { amount: "76000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Duck Delish"),         altText: "Pawmeals Duck Delish" },         tags: ["dog", "duck"],    variants: { edges: [{ node: { id: "v8",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "9",  title: "Lamb of Fame",        handle: "lamb-of-fame",        description: "Grain Free Lamb — premium grain-free formula",               priceRange: { minVariantPrice: { amount: "100000", currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Lamb of Fame"),        altText: "Pawmeals Lamb of Fame" },        tags: ["dog", "lamb", "grain-free"], variants: { edges: [{ node: { id: "v9",  availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "10", title: "Granny Rabbity",      handle: "granny-rabbity",      description: "Cooked rabbit for senior dogs — gentle on joints",           priceRange: { minVariantPrice: { amount: "86000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Granny Rabbity"),      altText: "Pawmeals Granny Rabbity" },      tags: ["dog", "senior"],  variants: { edges: [{ node: { id: "v10", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "11", title: "Cat Quack'A Tuna",    handle: "cat-quack-a-tuna",    description: "Duck & tuna cooked cat food — irresistible flavour",         priceRange: { minVariantPrice: { amount: "75000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Cat Quack Tuna"),      altText: "Pawmeals Cat Quack'A Tuna" },    tags: ["cat", "duck"],    variants: { edges: [{ node: { id: "v11", availableForSale: true } }] }, vendor: "Pawmeals" },
-  { id: "12", title: "Cat Salmon Rostie",   handle: "cat-salmon-rostie",   description: "Salmon & chicken cooked cat food — rich in omega-3",         priceRange: { minVariantPrice: { amount: "65000",  currencyCode: "IDR" } }, featuredImage: { url: getProductPlaceholder("Cat Salmon Rostie"),   altText: "Pawmeals Cat Salmon Rostie" },   tags: ["cat", "salmon"],  variants: { edges: [{ node: { id: "v12", availableForSale: true } }] }, vendor: "Pawmeals" },
-];
-
 export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
-  const displayProducts: ShopifyProduct[] = products.length > 0 ? products : (PLACEHOLDER_PRODUCTS as unknown as ShopifyProduct[]);
+  const displayProducts = products;
 
   const sorted = [...displayProducts].sort((a, b) => {
     if (sort === "price-asc") return parseFloat(a.priceRange.minVariantPrice.amount) - parseFloat(b.priceRange.minVariantPrice.amount);
     if (sort === "price-desc") return parseFloat(b.priceRange.minVariantPrice.amount) - parseFloat(a.priceRange.minVariantPrice.amount);
     return 0;
   });
+
+  if (sorted.length === 0) {
+    return (
+      <section aria-label={locale === "id" ? "Daftar produk Pawmeals" : "Pawmeals product list"}>
+        <div className="rounded-3xl border border-pm-sand/50 bg-white/85 px-6 py-12 text-center shadow-warm-sm">
+          <h2 className="font-heading text-2xl font-bold text-pm-brown mb-3">
+            {locale === "id" ? "Belum ada produk yang dipublikasikan" : "No published products yet"}
+          </h2>
+          <p className="mx-auto max-w-xl text-body-md text-pm-brown/65">
+            {locale === "id"
+              ? "Tambahkan produk dan kategori di Pawmeals Studio agar katalog ini tampil di website."
+              : "Add products and categories in Pawmeals Studio to populate this catalogue on the website."}
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section aria-label={locale === "id" ? "Daftar produk Pawmeals" : "Pawmeals product list"}>
@@ -54,7 +55,7 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
         {sorted.map((product) => {
-          const isCat = product.tags?.includes("cat");
+          const isCat = product.category?.slug === "cat" || product.tags?.includes("cat");
           const SpeciesIcon = isCat ? Cat : Dog;
           return (
             <Link
@@ -90,7 +91,7 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
               </div>
               <div className="p-5 flex flex-col flex-1">
                 <span className="text-pm-caramel-dark text-body-xs font-bold uppercase tracking-[0.16em] mb-2">
-                  {isCat ? locale === "id" ? "Makanan Kucing" : "Cat Food" : locale === "id" ? "Makanan Anjing" : "Dog Food"}
+                  {product.category?.title || (isCat ? locale === "id" ? "Makanan Kucing" : "Cat Food" : locale === "id" ? "Makanan Anjing" : "Dog Food")}
                 </span>
                 <h3 className="font-heading font-bold text-pm-brown text-xl leading-snug mb-2 group-hover:text-pm-caramel-dark transition-colors line-clamp-2">
                   {product.title}

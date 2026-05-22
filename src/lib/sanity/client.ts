@@ -1,6 +1,7 @@
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { WebsiteProduct } from "@/types/site-content";
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
@@ -169,7 +170,193 @@ export const HOMEPAGE_QUERY = `
       location,
       quote,
       photo { asset->{ _id, url } }
+    },
+    quizCta {
+      eyebrow,
+      headline,
+      description,
+      primaryCtaText,
+      primaryCtaLink,
+      secondaryCtaText,
+      secondaryCtaLink,
+      highlights
+    },
+    instagramFeed {
+      handle,
+      headline,
+      ctaText,
+      url,
+      posts[] {
+        label,
+        url,
+        image { asset->{ _id, url }, alt }
+      }
+    },
+    newsletterSignup {
+      headline,
+      description,
+      placeholder,
+      buttonText,
+      successMessage,
+      invalidEmailMessage,
+      errorMessage,
+      privacyText,
+      perks
     }
+  }
+`;
+
+export const SITE_SETTINGS_QUERY = `
+  *[_type == "siteSettings" && _id == "siteSettings" && !(_id in path("drafts.**"))][0] {
+    brandName,
+    tagline,
+    logo { asset->{ _id, url }, alt },
+    defaultOgImage { asset->{ _id, url }, alt },
+    navItems[] { label, href },
+    footerLinks[] { label, href, group },
+    socials[] { platform, url },
+    whatsappNumber,
+    email,
+    phone,
+    location,
+    vetClinicCount,
+    primaryColor,
+    accentColor
+  }
+`;
+
+export const PRODUCT_CATEGORIES_QUERY = `
+  *[_type == "productCategory" && !(_id in path("drafts.**"))] | order(coalesce(order, 100) asc, title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    description,
+    icon,
+    order
+  }
+`;
+
+export const SANITY_PRODUCTS_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ] | order(coalesce(sortOrder, 100) asc, title asc) {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const SANITY_PRODUCT_BY_HANDLE_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && slug.current == $handle
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ][0] {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const FEATURED_SANITY_PRODUCTS_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && featured == true
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ] | order(coalesce(sortOrder, 100) asc, title asc)[0...4] {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const SUBSCRIPTION_PAGE_QUERY = `
+  *[
+    _type == "subscriptionPage"
+    && !(_id in path("drafts.**"))
+    && (
+      language == $locale
+      || _id == "subscriptionPage__" + $locale
+      || (!defined(language) && $locale == "id")
+    )
+  ] | order(select(_id == "subscriptionPage__" + $locale => 0, language == $locale => 1, 2))[0] {
+    heroEyebrow,
+    heroHeadline,
+    heroDescription,
+    heroCtaText,
+    heroCtaLink,
+    discountBadge,
+    perks[] { icon, title, description },
+    stepsHeading,
+    steps[] { icon, title, description },
+    frequencyHeading,
+    frequencies[] { label, badge, savings },
+    finalCtaText,
+    finalCtaLink
   }
 `;
 
@@ -177,6 +364,9 @@ export const CATERING_QUERY = `
   *[_type == "cateringPage" && !(_id in path("drafts.**"))][0] {
     heroHeadline,
     heroSubheadline,
+    heroImage { asset->{ _id, url }, alt },
+    whatsappNumber,
+    ctaText,
     services[] {
       title,
       description,
@@ -198,9 +388,12 @@ export const CATERING_QUERY = `
 
 export const ABOUT_QUERY = `
   *[_type == "aboutPage" && !(_id in path("drafts.**"))][0] {
+    heroHeadline,
+    heroImage { asset->{ _id, url }, alt },
     story,
     mission,
     vision,
+    brandProof[] { stat, description, icon },
     values[] { title, description, icon },
     team[] {
       name,
@@ -245,6 +438,82 @@ export async function getHomepageContent(locale: string = "id") {
   try { return await sanityClient.fetch(HOMEPAGE_QUERY, { locale }); }
   catch (e) { console.warn("[Sanity] getHomepageContent failed:", e); return null; }
 }
+
+function mapSanityProduct(product: any): WebsiteProduct {
+  const firstImage = product.images?.[0];
+  const firstTier = product.pricingTiers?.find((tier: any) => typeof tier?.priceIDR === "number");
+  const fallbackVariantId = `sanity-${product._id || product.handle || product.title}`;
+
+  return {
+    id: product._id,
+    title: product.title,
+    handle: product.handle,
+    description: product.shortDescription,
+    longDescription: product.longDescription,
+    featuredImage: firstImage?.asset?.url
+      ? { url: firstImage.asset.url, altText: firstImage.alt || product.title }
+      : null,
+    images: (product.images || [])
+      .filter((image: any) => image?.asset?.url)
+      .map((image: any) => ({ url: image.asset.url, altText: image.alt || product.title })),
+    tags: [product.category?.slug, ...(product.badges || [])].filter(Boolean),
+    category: product.category || null,
+    pricingTiers: product.pricingTiers || [],
+    ingredients: product.ingredients || [],
+    feedingGuide: product.feedingGuide,
+    priceRange: {
+      minVariantPrice: {
+        amount: String(firstTier?.priceIDR ?? 0),
+        currencyCode: "IDR",
+      },
+    },
+    variants: { edges: [{ node: { id: fallbackVariantId, availableForSale: true } }] },
+    vendor: "Pawmeals",
+    featured: Boolean(product.featured),
+  };
+}
+
+export async function getSiteSettings() {
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(SITE_SETTINGS_QUERY); }
+  catch (e) { console.warn("[Sanity] getSiteSettings failed:", e); return null; }
+}
+
+export async function getProductCategories() {
+  if (!isSanityConfigured) return [];
+  try { return await sanityClient.fetch(PRODUCT_CATEGORIES_QUERY); }
+  catch (e) { console.warn("[Sanity] getProductCategories failed:", e); return []; }
+}
+
+export async function getSanityProducts(locale: string = "id") {
+  if (!isSanityConfigured) return [];
+  try {
+    const products = await sanityClient.fetch(SANITY_PRODUCTS_QUERY, { locale });
+    return (products || []).map(mapSanityProduct);
+  } catch (e) { console.warn("[Sanity] getSanityProducts failed:", e); return []; }
+}
+
+export async function getFeaturedSanityProducts(locale: string = "id") {
+  if (!isSanityConfigured) return [];
+  try {
+    const products = await sanityClient.fetch(FEATURED_SANITY_PRODUCTS_QUERY, { locale });
+    return (products || []).map(mapSanityProduct);
+  } catch (e) { console.warn("[Sanity] getFeaturedSanityProducts failed:", e); return []; }
+}
+
+export async function getSanityProductByHandle(handle: string, locale: string = "id") {
+  if (!isSanityConfigured) return null;
+  try {
+    const product = await sanityClient.fetch(SANITY_PRODUCT_BY_HANDLE_QUERY, { handle, locale });
+    return product ? mapSanityProduct(product) : null;
+  } catch (e) { console.warn("[Sanity] getSanityProductByHandle failed:", e); return null; }
+}
+export async function getSubscriptionContent(locale: string = "id") {
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(SUBSCRIPTION_PAGE_QUERY, { locale }); }
+  catch (e) { console.warn("[Sanity] getSubscriptionContent failed:", e); return null; }
+}
+
 export async function getCateringContent() {
   if (!isSanityConfigured) return null;
   try { return await sanityClient.fetch(CATERING_QUERY); }

@@ -3,19 +3,11 @@ import Image from "next/image";
 import { ArrowRight, Award, Cat, Dog, Leaf, ShoppingBag, Star } from "lucide-react";
 import { formatPrice } from "@/lib/shopify";
 import type { Locale } from "@/lib/i18n/config";
-import type { ShopifyProduct } from "@/types/shopify";
-import { PLACEHOLDER_IMAGES } from "@/lib/placeholder-images";
-
-const PRODUCT_IMAGES = [
-  PLACEHOLDER_IMAGES.productChicken,
-  PLACEHOLDER_IMAGES.productBeef,
-  PLACEHOLDER_IMAGES.productFish,
-  PLACEHOLDER_IMAGES.productChicken,
-];
+import type { WebsiteProduct } from "@/types/site-content";
 
 interface FeaturedProductsProps {
   locale: Locale;
-  products: ShopifyProduct[];
+  products: WebsiteProduct[];
 }
 
 export function FeaturedProducts({ locale, products }: FeaturedProductsProps) {
@@ -31,21 +23,11 @@ export function FeaturedProducts({ locale, products }: FeaturedProductsProps) {
     noPreservatives: locale === "id" ? "Tanpa Pengawet" : "No Preservatives",
   };
 
-  const placeholderProducts = Array.from({ length: 4 }, (_, i) => ({
-    id: `placeholder-${i}`,
-    title: ["Pawmeals Daily Wellness", "Pawmeals Joint Care", "Pawmeals Weight Management", "Pawmeals Cat Classic"][i],
-    handle: ["daily-wellness", "joint-care", "weight-management", "cat-classic"][i],
-    description: locale === "id"
-      ? "Formula seimbang untuk kesehatan optimal hewan peliharaanmu sehari-hari."
-      : "Balanced formula for your pet's optimal daily health.",
-    priceRange: { minVariantPrice: { amount: String(75000 + i * 15000), currencyCode: "IDR" } },
-    featuredImage: { url: PRODUCT_IMAGES[i], altText: ["Pawmeals Daily Wellness", "Pawmeals Joint Care", "Pawmeals Weight Management", "Pawmeals Cat Classic"][i] },
-    tags: i < 3 ? ["dog"] : ["cat"],
-    variants: { edges: [{ node: { availableForSale: true, id: `v-${i}` } }] },
-    vendor: "Pawmeals",
-  }));
+  const displayProducts = products.slice(0, 4);
 
-  const displayProducts = products.length > 0 ? products.slice(0, 4) : placeholderProducts;
+  if (displayProducts.length === 0) {
+    return null;
+  }
 
   return (
     <section className="section-padding bg-pm-cream" aria-labelledby="featured-products-heading">
@@ -66,7 +48,7 @@ export function FeaturedProducts({ locale, products }: FeaturedProductsProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayProducts.map((product) => {
-            const isCat = product.tags?.includes("cat");
+            const isCat = product.category?.slug === "cat" || product.tags?.includes("cat");
             const SpeciesIcon = isCat ? Cat : Dog;
             return (
               <article key={product.id} className="group luxury-panel rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-warm-xl flex flex-col">
@@ -100,7 +82,7 @@ export function FeaturedProducts({ locale, products }: FeaturedProductsProps) {
 
                 <div className="p-5 flex flex-col flex-1">
                   <span className="text-pm-caramel-dark text-body-xs font-bold uppercase tracking-[0.16em] mb-2">
-                    {isCat ? locale === "id" ? "Makanan Kucing" : "Cat Food" : locale === "id" ? "Makanan Anjing" : "Dog Food"}
+                    {product.category?.title || (isCat ? locale === "id" ? "Makanan Kucing" : "Cat Food" : locale === "id" ? "Makanan Anjing" : "Dog Food")}
                   </span>
                   <Link href={`/${locale}/products/${product.handle}`}>
                     <h3 className="font-heading font-bold text-pm-brown text-xl leading-snug mb-2 hover:text-pm-caramel-dark transition-colors line-clamp-2">

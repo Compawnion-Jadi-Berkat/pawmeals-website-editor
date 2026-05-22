@@ -3,7 +3,7 @@
  * All document types registered here appear in Sanity Studio.
  *
  * Singletons (one document per type):
- *   homepage, cateringPage, aboutPage, vetExclusivePage
+ *   homepage, cateringPage, aboutPage, vetExclusivePage, subscriptionPage
  *
  * Collections (many documents):
  *   blogPost, pawrentingTip, vetArticle, faq, author, productCategory,
@@ -15,6 +15,7 @@ import { cateringPage }     from "./cateringPage";
 import { aboutPage }        from "./aboutPage";
 import { vetExclusivePage } from "./vetExclusive";
 import { siteSettings }     from "./siteSettings";
+import { subscriptionPage } from "./subscriptionPage";
 import { blogPost }         from "./blogPost";
 import { pawrentingTip }    from "./pawrentingTip";
 import { vetArticle }       from "./vetArticle";
@@ -32,6 +33,7 @@ export const schemaTypes = [
   aboutPage,
   vetExclusivePage,
   siteSettings,
+  subscriptionPage,
 
   // Collections
   blogPost,

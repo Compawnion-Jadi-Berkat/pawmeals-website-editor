@@ -14,6 +14,8 @@ export const product = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({ name: "category", title: "Category", type: "reference", to: [{ type: "productCategory" }] }),
+    defineField({ name: "featured", title: "Feature on Homepage", type: "boolean", initialValue: false }),
+    defineField({ name: "sortOrder", title: "Display Order", type: "number", initialValue: 100 }),
     defineField({ name: "shortDescription", title: "Short Description", type: "text", rows: 2 }),
     defineField({ name: "longDescription", title: "Long Description", type: "array", of: [{ type: "block" }] }),
     defineField({
@@ -53,6 +55,7 @@ export const product = defineType({
     }),
     defineField({ name: "ingredients", title: "Ingredients", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "feedingGuide", title: "Feeding Guide", type: "text", rows: 4 }),
+    defineField({ name: "badges", title: "Product Badges", type: "array", of: [{ type: "string" }], description: "Optional short badges such as Fresh Cooked, Vet Curated, or No Preservatives." }),
     defineField({
       name: "availableLocales",
       title: "Available Locales",
