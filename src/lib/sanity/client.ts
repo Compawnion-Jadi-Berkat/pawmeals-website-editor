@@ -4,11 +4,13 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { WebsiteProduct } from "@/types/site-content";
 
 const CANONICAL_SANITY_PROJECT_ID = "lr00lxe1";
+const CANONICAL_SANITY_DATASET = "production";
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || CANONICAL_SANITY_PROJECT_ID;
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || CANONICAL_SANITY_DATASET;
 // Sanity is always configured — Pawmeals Studio lives in the canonical project.
 const isSanityConfigured = true;
-const shouldTryCanonicalFallback = projectId !== CANONICAL_SANITY_PROJECT_ID;
+const shouldTryCanonicalFallback =
+  projectId !== CANONICAL_SANITY_PROJECT_ID || dataset !== CANONICAL_SANITY_DATASET;
 
 export const sanityClient = createClient({
   projectId,
@@ -23,7 +25,7 @@ export const sanityClient = createClient({
 
 const canonicalSanityClient = createClient({
   projectId: CANONICAL_SANITY_PROJECT_ID,
-  dataset,
+  dataset: CANONICAL_SANITY_DATASET,
   apiVersion: "2024-01-01",
   useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
   token: process.env.SANITY_API_TOKEN,
