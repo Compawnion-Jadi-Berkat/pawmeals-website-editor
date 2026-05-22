@@ -1,0 +1,32 @@
+filters:
+  and:
+    - 'type == "page-note"'
+properties:
+  file.name:
+    displayName: "Page Note"
+  route:
+    displayName: "Route"
+  sanity_documents:
+    displayName: "Sanity Documents"
+  components:
+    displayName: "Components"
+  priority:
+    displayName: "Priority"
+  status:
+    displayName: "Status"
+views:
+  - type: table
+    name: "Pages by Route"
+    order:
+      - file.name
+      - route
+      - sanity_documents
+      - components
+      - priority
+      - status
+  - type: cards
+    name: "Page Cards"
+    order:
+      - file.name
+      - route
+      - priority
