@@ -4,18 +4,11 @@ import { useTranslations } from "next-intl";
 import { Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { SiteFooterLink, SiteSettingsContent } from "@/types/site-content";
+import { getFallbackFooterLinks, normalizePublicHref } from "@/lib/navigation";
 
 interface FooterProps {
   locale: Locale;
   siteSettings?: SiteSettingsContent | null;
-}
-
-function withLocalePrefix(href: string, locale: Locale) {
-  if (!href) return `/${locale}`;
-  if (href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:")) return href;
-  if (href === "/") return `/${locale}`;
-  if (href.startsWith(`/${locale}/`) || href === `/${locale}`) return href;
-  return `/${locale}${href.startsWith("/") ? href : `/${href}`}`;
 }
 
 function socialIcon(platform?: string) {
@@ -28,7 +21,7 @@ function socialIcon(platform?: string) {
 function groupedLinks(links: SiteFooterLink[] | undefined, group: string, locale: Locale) {
   return (links || [])
     .filter((link) => link?.label && link?.href && link.group === group)
-    .map((link) => ({ ...link, href: withLocalePrefix(link.href, locale) }));
+    .map((link) => ({ ...link, href: normalizePublicHref(link.href, locale) }));
 }
 
 export function Footer({ locale, siteSettings }: FooterProps) {
@@ -36,10 +29,13 @@ export function Footer({ locale, siteSettings }: FooterProps) {
   const year = new Date().getFullYear();
   const brandName = siteSettings?.brandName || "Pawmeals";
   const tagline = siteSettings?.tagline || t("tagline");
-  const shopLinks = groupedLinks(siteSettings?.footerLinks, "shop", locale);
-  const companyLinks = groupedLinks(siteSettings?.footerLinks, "company", locale);
-  const supportLinks = groupedLinks(siteSettings?.footerLinks, "support", locale);
-  const legalLinks = groupedLinks(siteSettings?.footerLinks, "legal", locale);
+  const footerLinks = siteSettings?.footerLinks?.some((link) => link?.label && link?.href)
+    ? siteSettings.footerLinks
+    : getFallbackFooterLinks(locale);
+  const shopLinks = groupedLinks(footerLinks, "shop", locale);
+  const companyLinks = groupedLinks(footerLinks, "company", locale);
+  const supportLinks = groupedLinks(footerLinks, "support", locale);
+  const legalLinks = groupedLinks(footerLinks, "legal", locale);
   const whatsappNumber = siteSettings?.whatsappNumber;
   const whatsappMessage = encodeURIComponent(
     locale === "id"

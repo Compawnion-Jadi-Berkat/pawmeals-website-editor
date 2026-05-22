@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, ChevronLeft, ChevronRight, Leaf, Sparkles } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
+import { normalizePublicHref } from "@/lib/navigation";
 
 interface HeroSlide {
   headline: string;
@@ -79,7 +80,7 @@ export function HeroCarousel({ locale, slides }: HeroCarouselProps) {
 
               {slide.ctaText && slide.ctaLink && (
                 <div className="flex flex-wrap gap-3 mb-9">
-                  <Link href={slide.ctaLink} className="btn-primary px-7 py-3.5">
+                  <Link href={normalizePublicHref(slide.ctaLink, locale)} className="btn-primary px-7 py-3.5">
                     {slide.ctaText}
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </Link>

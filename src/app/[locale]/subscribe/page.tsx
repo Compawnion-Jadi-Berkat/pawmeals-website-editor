@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Percent, RefreshCw, Settings, Truck } from "lucide-react";
 import { getSubscriptionContent } from "@/lib/sanity/client";
 import type { Locale } from "@/lib/i18n/config";
+import { normalizePublicHref } from "@/lib/navigation";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +55,7 @@ export default async function SubscribePage({ params }: { params: Promise<{ loca
             {content?.heroHeadline && <h1 className="font-heading text-4xl sm:text-5xl font-bold mb-6">{content.heroHeadline}</h1>}
             {content?.heroDescription && <p className="text-white/80 text-body-lg mb-8 max-w-2xl mx-auto">{content.heroDescription}</p>}
             {content?.heroCtaText && content?.heroCtaLink && (
-              <Link href={content.heroCtaLink} className="inline-flex items-center gap-2 bg-white text-pm-caramel font-bold px-8 py-4 rounded-xl hover:bg-pm-cream transition-colors text-body-lg">
+              <Link href={normalizePublicHref(content.heroCtaLink, locale)} className="inline-flex items-center gap-2 bg-white text-pm-caramel font-bold px-8 py-4 rounded-xl hover:bg-pm-cream transition-colors text-body-lg">
                 {content.heroCtaText}
                 <ArrowRight className="w-5 h-5" />
               </Link>
@@ -124,7 +125,7 @@ export default async function SubscribePage({ params }: { params: Promise<{ loca
               </div>
             )}
             {content?.finalCtaText && content?.finalCtaLink && (
-              <Link href={content.finalCtaLink} className="inline-flex items-center gap-2 bg-pm-caramel text-white font-bold px-8 py-4 rounded-xl hover:bg-pm-caramel-dark transition-colors">
+              <Link href={normalizePublicHref(content.finalCtaLink, locale)} className="inline-flex items-center gap-2 bg-pm-caramel text-white font-bold px-8 py-4 rounded-xl hover:bg-pm-caramel-dark transition-colors">
                 {content.finalCtaText}
                 <ArrowRight className="w-4 h-4" />
               </Link>

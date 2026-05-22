@@ -9,18 +9,11 @@ import type { Locale } from "@/lib/i18n/config";
 import { localeNames } from "@/lib/i18n/config";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import type { SiteNavItem, SiteSettingsContent } from "@/types/site-content";
+import { getFallbackNavItems, normalizePublicHref } from "@/lib/navigation";
 
 interface NavbarProps {
   locale: Locale;
   siteSettings?: SiteSettingsContent | null;
-}
-
-function withLocalePrefix(href: string, locale: Locale) {
-  if (!href) return `/${locale}`;
-  if (href.startsWith("http") || href.startsWith("mailto:") || href.startsWith("tel:")) return href;
-  if (href === "/") return `/${locale}`;
-  if (href.startsWith(`/${locale}/`) || href === `/${locale}`) return href;
-  return `/${locale}${href.startsWith("/") ? href : `/${href}`}`;
 }
 
 export function Navbar({ locale, siteSettings }: NavbarProps) {
@@ -42,13 +35,13 @@ export function Navbar({ locale, siteSettings }: NavbarProps) {
     setIsMoreOpen(false);
   }, [pathname]);
 
-  const navItems = useMemo<SiteNavItem[]>(
-    () =>
-      (siteSettings?.navItems || [])
-        .filter((item) => item?.label && item?.href)
-        .map((item) => ({ label: item.label, href: withLocalePrefix(item.href, locale) })),
-    [locale, siteSettings?.navItems]
-  );
+  const navItems = useMemo<SiteNavItem[]>(() => {
+    const studioNavItems = (siteSettings?.navItems || [])
+      .filter((item) => item?.label && item?.href)
+      .map((item) => ({ label: item.label, href: normalizePublicHref(item.href, locale) }));
+
+    return studioNavItems.length > 0 ? studioNavItems : getFallbackNavItems(locale);
+  }, [locale, siteSettings?.navItems]);
 
   const primaryLinks = navItems.slice(0, 4);
   const secondaryLinks = navItems.slice(4);
