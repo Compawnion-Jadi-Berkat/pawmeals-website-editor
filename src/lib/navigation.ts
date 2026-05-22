@@ -9,19 +9,19 @@ const LEGACY_ROUTE_ALIASES: Record<string, string> = {
 const DEFAULT_NAV_LABELS: Record<Locale, SiteNavItem[]> = {
   id: [
     { label: "Katering", href: "/catering" },
+    { label: "Quiz", href: "/quiz" },
     { label: "Tentang Kami", href: "/about" },
     { label: "Vet Exclusive", href: "/vet" },
     { label: "Produk", href: "/products" },
-    { label: "Quiz", href: "/quiz" },
     { label: "Tips Pawrenting", href: "/blog" },
     { label: "FAQ", href: "/faqs" },
   ],
   en: [
     { label: "Catering", href: "/catering" },
+    { label: "Quiz", href: "/quiz" },
     { label: "About Us", href: "/about" },
     { label: "Vet Exclusive", href: "/vet" },
     { label: "Products", href: "/products" },
-    { label: "Quiz", href: "/quiz" },
     { label: "Pawrenting Tips", href: "/blog" },
     { label: "FAQs", href: "/faqs" },
   ],
@@ -66,11 +66,28 @@ export function normalizePublicHref(href: string, locale: Locale) {
   return `/${locale}${normalizedPath}${suffix}`;
 }
 
+export function prioritizeQuizAfterCatering(items: SiteNavItem[]) {
+  const cateringIndex = items.findIndex((item) => item.href.includes("/catering"));
+  const quizIndex = items.findIndex((item) => item.href.includes("/quiz"));
+
+  if (cateringIndex === -1 || quizIndex === -1 || quizIndex === cateringIndex + 1) {
+    return items;
+  }
+
+  const reordered = [...items];
+  const [quizItem] = reordered.splice(quizIndex, 1);
+  const updatedCateringIndex = reordered.findIndex((item) => item.href.includes("/catering"));
+  reordered.splice(updatedCateringIndex + 1, 0, quizItem);
+  return reordered;
+}
+
 export function getFallbackNavItems(locale: Locale) {
-  return DEFAULT_NAV_LABELS[locale].map((item) => ({
-    ...item,
-    href: normalizePublicHref(item.href, locale),
-  }));
+  return prioritizeQuizAfterCatering(
+    DEFAULT_NAV_LABELS[locale].map((item) => ({
+      ...item,
+      href: normalizePublicHref(item.href, locale),
+    })),
+  );
 }
 
 export function getFallbackFooterLinks(locale: Locale) {

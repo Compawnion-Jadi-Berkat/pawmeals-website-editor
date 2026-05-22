@@ -30,7 +30,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#C8773A",
+  themeColor: "#D8615A",
   width: "device-width",
   initialScale: 1,
 };

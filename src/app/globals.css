@@ -8,35 +8,35 @@
 
 /* DESIGN TOKENS*/
 :root {
-  /* Surfaces cream dominates */
-  --color-bg:           #FAF6EF;  /* page */
-  --color-bg-alt:       #F3ECE0;  /* alternating bands, cards on cream */
-  --color-bg-card:      #FFFFFF;  /* product / testimonial cards */
-  --color-bg-inverse:   #2A1B10;  /* deep brown â€” footer only */
+  /* Official Pawmeals brand surfaces: prioritize beige or white */
+  --color-bg:           #FDFDFE;  /* brand white page base */
+  --color-bg-alt:       #FAE7D8;  /* brand beige section base */
+  --color-bg-card:      #FDFDFE;  /* brand white cards / glass panels */
+  --color-bg-inverse:   #323232;  /* brand charcoal footer / inverse surfaces */
 
-  /* Ink */
-  --color-text:         #2A1B10;  /* body & headings */
-  --color-text-muted:   #6B5848;  /* secondary copy */
-  --color-text-light:   #9A8472;  /* meta / captions */
-  --color-text-inverse: #FAF6EF;  /* on dark surfaces */
+  /* Official Pawmeals ink */
+  --color-text:         #323232;  /* body & headings */
+  --color-text-muted:   #6F5F59;  /* softened charcoal on warm beige */
+  --color-text-light:   #8B7B74;  /* meta / captions */
+  --color-text-inverse: #FDFDFE;  /* on dark surfaces */
 
   /* Lines */
-  --color-border:       #E2D6C2;
-  --color-border-light: #EFE6D5;
+  --color-border:       #E8D5CA;
+  --color-border-light: #F4DED0;
 
-  /* Brand accents (use sparingly) */
-  --color-primary:      #6E3F1F;  /* rich brown â€” headings, primary CTAs */
-  --color-primary-dark: #4F2B14;
-  --color-accent:       #C97A1F;  /* warm copper â€” CTAs, highlights */
-  --color-accent-dark:  #A65F12;
-  --color-sage:         #7A9E7E;  /* trust / vet badge */
-  --color-sage-dark:    #5F8265;
-  --color-gold:         #C9A24A;  /* ratings, premium markers */
+  /* Official brand accents */
+  --color-primary:      #D8615A;  /* Pawmeals red — primary color */
+  --color-primary-dark: #B94F49;
+  --color-accent:       #F2B943;  /* Pawmeals yellow — highlights */
+  --color-accent-dark:  #C78F1C;
+  --color-sage:         #CFCFCE;  /* brand grey — calm support surfaces */
+  --color-sage-dark:    #8A8A88;
+  --color-gold:         #F2B943;  /* premium markers */
 
   /* Semantic */
-  --color-success:      #5F8265;
-  --color-warning:      #C9A24A;
-  --color-error:        #B4452C;
+  --color-success:      #6E8F6A;
+  --color-warning:      #F2B943;
+  --color-error:        #D8615A;
 
   /* Typography */
   --font-display: var(--font-heading), 'Varela Round', system-ui, sans-serif;
@@ -75,11 +75,11 @@
   --radius-pill: 9999px;
 
   /* Shadows â€” single coherent ramp */
-  --shadow-xs:  0 1px 2px rgba(42, 27, 16, 0.04);
-  --shadow-sm:  0 2px 6px rgba(42, 27, 16, 0.06);
-  --shadow-md:  0 8px 24px -8px rgba(42, 27, 16, 0.10);
-  --shadow-lg:  0 20px 48px -16px rgba(42, 27, 16, 0.14);
-  --shadow-cta: 0 6px 16px -4px rgba(201, 122, 31, 0.35);
+  --shadow-xs:  0 1px 2px rgba(50, 50, 50, 0.04);
+  --shadow-sm:  0 2px 6px rgba(50, 50, 50, 0.06);
+  --shadow-md:  0 8px 24px -8px rgba(50, 50, 50, 0.10);
+  --shadow-lg:  0 20px 48px -16px rgba(50, 50, 50, 0.14);
+  --shadow-cta: 0 6px 16px -4px rgba(216, 97, 90, 0.32);
 
   /* Motion */
   --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
@@ -137,7 +137,7 @@
     border-radius: var(--radius-sm);
   }
 
-  ::selection { background-color: rgba(201, 122, 31, 0.22); color: var(--color-primary); }
+  ::selection { background-color: rgba(216, 97, 90, 0.20); color: var(--color-primary); }
 }
 
 /*COMPONENTS*/
@@ -275,10 +275,10 @@
     text-transform: uppercase;
     border-radius: var(--radius-pill);
   }
-  .badge-primary    { background: rgba(110, 63, 31, 0.10); color: var(--color-primary); }
-  .badge-accent     { background: rgba(201, 122, 31, 0.12); color: var(--color-accent-dark); }
-  .badge-sage       { background: rgba(122, 158, 126, 0.16); color: var(--color-sage-dark); }
-  .badge-gold       { background: rgba(201, 162, 74, 0.16); color: #8A6E1F; }
+  .badge-primary    { background: rgba(216, 97, 90, 0.12); color: var(--color-primary); }
+  .badge-accent     { background: rgba(242, 185, 67, 0.18); color: var(--color-accent-dark); }
+  .badge-sage       { background: rgba(207, 207, 206, 0.35); color: var(--color-sage-dark); }
+  .badge-gold       { background: rgba(242, 185, 67, 0.22); color: #8A6E1F; }
 
   /*FORM*/
   .input {
@@ -291,7 +291,7 @@
     transition: border-color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
   }
   .input::placeholder { color: var(--color-text-light); }
-  .input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(201, 122, 31, 0.18); }
+  .input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(216, 97, 90, 0.18); }
 
   .label {
     display: block;
@@ -327,7 +327,7 @@
   .text-pretty  { text-wrap: pretty; }
 
   .text-gradient-warm {
-    background: linear-gradient(135deg, #6E3F1F 0%, #C97A1F 100%);
+    background: linear-gradient(135deg, #D8615A 0%, #F2B943 100%);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent; color: transparent;
   }
@@ -340,16 +340,16 @@
   .aspect-card    { aspect-ratio: 3 / 2; }
 
   .glass {
-    background: rgba(250, 246, 239, 0.82);
+    background: rgba(253, 253, 254, 0.82);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
-    border: 1px solid rgba(226, 214, 194, 0.5);
+    border: 1px solid rgba(250, 231, 216, 0.64);
   }
 
   .scroll-mt-nav { scroll-margin-top: var(--nav-height); }
   .text-label-md { font-size: 0.8125rem; line-height: 1.4; letter-spacing: 0.08em; }
   .text-body-xs { font-size: 0.75rem; line-height: 1.45; }
-  .luxury-panel { background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,246,240,0.88)); border: 1px solid rgba(232,213,183,0.58); box-shadow: var(--shadow-md); }
+  .luxury-panel { background: linear-gradient(180deg, rgba(253,253,254,0.92), rgba(250,231,216,0.72)); border: 1px solid rgba(250,231,216,0.72); box-shadow: var(--shadow-md); }
 }
 
 

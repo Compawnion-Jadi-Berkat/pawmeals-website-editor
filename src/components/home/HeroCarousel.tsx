@@ -47,7 +47,7 @@ export function HeroCarousel({ locale, slides }: HeroCarouselProps) {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-[radial-gradient(circle_at_18%_18%,rgba(200,149,108,0.18),transparent_30%),linear-gradient(135deg,#FAF6F0_0%,#FFFDF8_48%,#F2EBE0_100%)]"
+      className="relative w-full overflow-hidden bg-[radial-gradient(circle_at_18%_18%,rgba(216,97,90,0.18),transparent_30%),radial-gradient(circle_at_82%_22%,rgba(242,185,67,0.16),transparent_28%),linear-gradient(135deg,#FDFDFE_0%,#FAE7D8_58%,#FDFDFE_100%)]"
       style={{ minHeight: "620px" }}
       aria-label={locale === "id" ? "Carousel utama" : "Hero carousel"}
       onMouseEnter={() => setIsAutoPlaying(false)}

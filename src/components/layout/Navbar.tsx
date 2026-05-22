@@ -9,7 +9,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { localeNames } from "@/lib/i18n/config";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import type { SiteNavItem, SiteSettingsContent } from "@/types/site-content";
-import { getFallbackNavItems, normalizePublicHref } from "@/lib/navigation";
+import { getFallbackNavItems, normalizePublicHref, prioritizeQuizAfterCatering } from "@/lib/navigation";
 
 interface NavbarProps {
   locale: Locale;
@@ -40,7 +40,7 @@ export function Navbar({ locale, siteSettings }: NavbarProps) {
       .filter((item) => item?.label && item?.href)
       .map((item) => ({ label: item.label, href: normalizePublicHref(item.href, locale) }));
 
-    return studioNavItems.length > 0 ? studioNavItems : getFallbackNavItems(locale);
+    return studioNavItems.length > 0 ? prioritizeQuizAfterCatering(studioNavItems) : getFallbackNavItems(locale);
   }, [locale, siteSettings?.navItems]);
 
   const primaryLinks = navItems.slice(0, 4);
