@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingBag, Menu, X, Globe, ChevronDown, Sparkles } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import type { Locale } from "@/lib/i18n/config";
-import { localeNames, localeFlags } from "@/lib/i18n/config";
+import { localeNames } from "@/lib/i18n/config";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 
 interface NavbarProps {
@@ -51,6 +51,7 @@ export function Navbar({ locale }: NavbarProps) {
   const safePath = pathname ?? "/";
   const otherLocalePath = safePath.replace(`/${locale}`, `/${otherLocale}`);
   const allMobileLinks = [...primaryNavLinks(locale), ...secondaryNavLinks(locale)];
+  const localeShortLabels: Record<Locale, string> = { id: "ID", en: "EN" };
 
   return (
     <>
@@ -120,7 +121,7 @@ export function Navbar({ locale }: NavbarProps) {
                 aria-expanded={isLangOpen}
               >
                 <Globe className="w-4 h-4" />
-                <span>{localeFlags[locale]}</span>
+                <span className="min-w-6 rounded-full bg-pm-cream px-2 py-0.5 text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[locale]}</span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isLangOpen ? "rotate-180" : ""}`} />
               </button>
 
@@ -135,7 +136,7 @@ export function Navbar({ locale }: NavbarProps) {
                         loc === locale ? "bg-pm-caramel/10 text-pm-caramel-dark" : "text-pm-brown hover:bg-pm-cream"
                       }`}
                     >
-                      <span>{localeFlags[loc]}</span>
+                      <span className="min-w-8 rounded-full bg-pm-cream px-2 py-1 text-center text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[loc]}</span>
                       <span>{localeNames[loc]}</span>
                     </Link>
                   ))}
@@ -195,7 +196,7 @@ export function Navbar({ locale }: NavbarProps) {
                       loc === locale ? "bg-pm-caramel/10 text-pm-caramel-dark" : "text-pm-brown hover:bg-pm-cream"
                     }`}
                   >
-                    <span>{localeFlags[loc]}</span>
+                    <span className="min-w-8 rounded-full bg-pm-cream px-2 py-1 text-center text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[loc]}</span>
                     <span>{localeNames[loc]}</span>
                   </Link>
                 ))}

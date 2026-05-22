@@ -7,11 +7,6 @@ export const localeNames: Record<Locale, string> = {
   en: "English",
 };
 
-export const localeFlags: Record<Locale, string> = {
-  id: "🇮🇩",
-  en: "🇬🇧",
-};
-
 export function isValidLocale(locale: string): locale is Locale {
   return locales.includes(locale as Locale);
 }

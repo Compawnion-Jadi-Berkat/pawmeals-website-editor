@@ -49,13 +49,18 @@ export default async function HomePage({
   const featuredProducts =
     featuredProductsData.status === "fulfilled" ? featuredProductsData.value.products : [];
 
+  // Sanity currently stores one shared homepage document without per-locale fields.
+  // Until the CMS schema is localized, only the Indonesian homepage should consume
+  // CMS homepage copy; English uses component fallbacks to preserve translation integrity.
+  const localizedHomepageContent = locale === "id" ? content : null;
+
   return (
     <>
       {/* Hero Section with Carousel */}
-      <HeroCarousel locale={locale} slides={content?.heroSlides ?? null} />
+      <HeroCarousel locale={locale} slides={localizedHomepageContent?.heroSlides ?? null} />
 
       {/* Why Pawmeals — Trust Signals */}
-      <WhyPawmeals locale={locale} features={content?.whyPawmeals ?? null} />
+      <WhyPawmeals locale={locale} features={localizedHomepageContent?.whyPawmeals ?? null} />
 
       {/* Featured Products */}
       <Suspense fallback={<div className="h-96 animate-pulse bg-pm-cream-dark" />}>
@@ -66,10 +71,10 @@ export default async function HomePage({
       <QuizCTA locale={locale} />
 
       {/* Vet Endorsement Section */}
-      <VetEndorsement locale={locale} vetPartners={content?.vetPartners ?? null} />
+      <VetEndorsement locale={locale} vetPartners={localizedHomepageContent?.vetPartners ?? null} />
 
       {/* Customer Testimonials */}
-      <Testimonials locale={locale} testimonials={content?.featuredTestimonials ?? null} />
+      <Testimonials locale={locale} testimonials={localizedHomepageContent?.featuredTestimonials ?? null} />
 
       {/* Instagram Feed */}
       <InstagramFeed locale={locale} />
