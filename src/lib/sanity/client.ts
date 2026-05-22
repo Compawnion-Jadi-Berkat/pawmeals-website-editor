@@ -11,7 +11,9 @@ export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: "2024-01-01",
-  useCdn: process.env.NODE_ENV === "production",
+  // Default to the live API so Studio publishes are reflected immediately on the website.
+  // Set NEXT_PUBLIC_SANITY_USE_CDN=true only if cached reads are intentionally preferred.
+  useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
   token: process.env.SANITY_API_TOKEN,
   perspective: "published",
 });
@@ -132,7 +134,15 @@ export const VET_ARTICLES_QUERY = `
 `;
 
 export const HOMEPAGE_QUERY = `
-  *[_type == "homepage" && !(_id in path("drafts.**"))][0] {
+  *[
+    _type == "homepage"
+    && !(_id in path("drafts.**"))
+    && (
+      language == $locale
+      || _id == "homepage__" + $locale
+      || (!defined(language) && $locale == "id")
+    )
+  ] | order(select(_id == "homepage__" + $locale => 0, language == $locale => 1, 2))[0] {
     heroSlides[] {
       headline,
       subheadline,
@@ -230,9 +240,9 @@ export async function getVetArticles() {
   try { return await sanityClient.fetch(VET_ARTICLES_QUERY); }
   catch (e) { console.warn("[Sanity] getVetArticles failed:", e); return []; }
 }
-export async function getHomepageContent() {
+export async function getHomepageContent(locale: string = "id") {
   if (!isSanityConfigured) return null;
-  try { return await sanityClient.fetch(HOMEPAGE_QUERY); }
+  try { return await sanityClient.fetch(HOMEPAGE_QUERY, { locale }); }
   catch (e) { console.warn("[Sanity] getHomepageContent failed:", e); return null; }
 }
 export async function getCateringContent() {
