@@ -3,10 +3,12 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import type { WebsiteProduct } from "@/types/site-content";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
+const CANONICAL_SANITY_PROJECT_ID = "lr00lxe1";
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || CANONICAL_SANITY_PROJECT_ID;
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-// Sanity is always configured — project ID lr00lxe1 is hardcoded as fallback
+// Sanity is always configured — Pawmeals Studio lives in the canonical project.
 const isSanityConfigured = true;
+const shouldTryCanonicalFallback = projectId !== CANONICAL_SANITY_PROJECT_ID;
 
 export const sanityClient = createClient({
   projectId,
@@ -18,6 +20,48 @@ export const sanityClient = createClient({
   token: process.env.SANITY_API_TOKEN,
   perspective: "published",
 });
+
+const canonicalSanityClient = createClient({
+  projectId: CANONICAL_SANITY_PROJECT_ID,
+  dataset,
+  apiVersion: "2024-01-01",
+  useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
+  token: process.env.SANITY_API_TOKEN,
+  perspective: "published",
+});
+
+async function fetchWithCanonicalFallback<T>(
+  query: string,
+  params: Record<string, unknown> = {},
+  isUsable: (value: T | null | undefined) => boolean,
+  label: string,
+  fallbackValue: T,
+): Promise<T> {
+  try {
+    const primaryResult = await sanityClient.fetch<T>(query, params);
+    if (isUsable(primaryResult)) return primaryResult;
+
+    if (shouldTryCanonicalFallback) {
+      const canonicalResult = await canonicalSanityClient.fetch<T>(query, params);
+      if (isUsable(canonicalResult)) return canonicalResult;
+    }
+
+    return primaryResult ?? fallbackValue;
+  } catch (primaryError) {
+    console.warn(`[Sanity] ${label} primary fetch failed:`, primaryError);
+
+    if (shouldTryCanonicalFallback) {
+      try {
+        const canonicalResult = await canonicalSanityClient.fetch<T>(query, params);
+        if (isUsable(canonicalResult)) return canonicalResult;
+      } catch (canonicalError) {
+        console.warn(`[Sanity] ${label} canonical fallback failed:`, canonicalError);
+      }
+    }
+
+    return fallbackValue;
+  }
+}
 
 // Image URL builder
 const builder = imageUrlBuilder(sanityClient);
@@ -435,8 +479,21 @@ export async function getVetArticles() {
 }
 export async function getHomepageContent(locale: string = "id") {
   if (!isSanityConfigured) return null;
-  try { return await sanityClient.fetch(HOMEPAGE_QUERY, { locale }); }
-  catch (e) { console.warn("[Sanity] getHomepageContent failed:", e); return null; }
+  return fetchWithCanonicalFallback<any | null>(
+    HOMEPAGE_QUERY,
+    { locale },
+    (content) => Boolean(content && (
+      content.heroSlides?.length ||
+      content.whyPawmeals?.length ||
+      content.featuredTestimonials?.length ||
+      content.vetPartners?.length ||
+      content.quizCta ||
+      content.instagramFeed ||
+      content.newsletterSignup
+    )),
+    "getHomepageContent",
+    null,
+  );
 }
 
 function mapSanityProduct(product: any): WebsiteProduct {
@@ -475,38 +532,60 @@ function mapSanityProduct(product: any): WebsiteProduct {
 
 export async function getSiteSettings() {
   if (!isSanityConfigured) return null;
-  try { return await sanityClient.fetch(SITE_SETTINGS_QUERY); }
-  catch (e) { console.warn("[Sanity] getSiteSettings failed:", e); return null; }
+  return fetchWithCanonicalFallback<any | null>(
+    SITE_SETTINGS_QUERY,
+    {},
+    (settings) => Boolean(settings && (settings.brandName || settings.navItems?.length || settings.footerLinks?.length)),
+    "getSiteSettings",
+    null,
+  );
 }
 
 export async function getProductCategories() {
   if (!isSanityConfigured) return [];
-  try { return await sanityClient.fetch(PRODUCT_CATEGORIES_QUERY); }
-  catch (e) { console.warn("[Sanity] getProductCategories failed:", e); return []; }
+  return fetchWithCanonicalFallback<any[]>(
+    PRODUCT_CATEGORIES_QUERY,
+    {},
+    (categories) => Boolean(categories?.length),
+    "getProductCategories",
+    [],
+  );
 }
 
 export async function getSanityProducts(locale: string = "id") {
   if (!isSanityConfigured) return [];
-  try {
-    const products = await sanityClient.fetch(SANITY_PRODUCTS_QUERY, { locale });
-    return (products || []).map(mapSanityProduct);
-  } catch (e) { console.warn("[Sanity] getSanityProducts failed:", e); return []; }
+  const products = await fetchWithCanonicalFallback<any[]>(
+    SANITY_PRODUCTS_QUERY,
+    { locale },
+    (items) => Boolean(items?.length),
+    "getSanityProducts",
+    [],
+  );
+  return (products || []).map(mapSanityProduct);
 }
 
 export async function getFeaturedSanityProducts(locale: string = "id") {
   if (!isSanityConfigured) return [];
-  try {
-    const products = await sanityClient.fetch(FEATURED_SANITY_PRODUCTS_QUERY, { locale });
-    return (products || []).map(mapSanityProduct);
-  } catch (e) { console.warn("[Sanity] getFeaturedSanityProducts failed:", e); return []; }
+  const products = await fetchWithCanonicalFallback<any[]>(
+    FEATURED_SANITY_PRODUCTS_QUERY,
+    { locale },
+    (items) => Boolean(items?.length),
+    "getFeaturedSanityProducts",
+    [],
+  );
+  return (products || []).map(mapSanityProduct);
 }
 
 export async function getSanityProductByHandle(handle: string, locale: string = "id") {
   if (!isSanityConfigured) return null;
-  try {
-    const product = await sanityClient.fetch(SANITY_PRODUCT_BY_HANDLE_QUERY, { handle, locale });
-    return product ? mapSanityProduct(product) : null;
-  } catch (e) { console.warn("[Sanity] getSanityProductByHandle failed:", e); return null; }
+  const product = await fetchWithCanonicalFallback<any | null>(
+    SANITY_PRODUCT_BY_HANDLE_QUERY,
+    { handle, locale },
+    (item) => Boolean(item?._id),
+    "getSanityProductByHandle",
+    null,
+  );
+  return product ? mapSanityProduct(product) : null;
 }
 export async function getSubscriptionContent(locale: string = "id") {
   if (!isSanityConfigured) return null;
