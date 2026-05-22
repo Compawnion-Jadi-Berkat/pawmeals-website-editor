@@ -19,7 +19,8 @@ export const sanityClient = createClient({
   // Default to the live API so Studio publishes are reflected immediately on the website.
   // Set NEXT_PUBLIC_SANITY_USE_CDN=true only if cached reads are intentionally preferred.
   useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
-  token: process.env.SANITY_API_TOKEN,
+  // Published website content is public. Avoid attaching SANITY_API_TOKEN here because
+  // a stale or invalid Vercel token makes otherwise public reads fail and empties pages.
   perspective: "published",
 });
 
@@ -28,7 +29,8 @@ const canonicalSanityClient = createClient({
   dataset: CANONICAL_SANITY_DATASET,
   apiVersion: "2024-01-01",
   useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
-  token: process.env.SANITY_API_TOKEN,
+  // Published website content is public. Avoid attaching SANITY_API_TOKEN here because
+  // a stale or invalid Vercel token makes otherwise public reads fail and empties pages.
   perspective: "published",
 });
 
