@@ -6,7 +6,7 @@ project: Pawmeals Website Editor
 subsystem: deployment
 severity: high
 tags: [deployment, vercel, github, validation]
-updated: 2026-05-22
+updated: 2026-06-12
 ---
 
 # Deployment and Verification Runbook
@@ -26,6 +26,9 @@ Production deploys are driven from the GitHub `main` branch to Vercel. A change 
 
 | Commit | Purpose | Local Validation |
 |---|---|---|
+| `340a9a6` | Added `*.pawmeals.co` to Next.js image `remotePatterns` for Shopify custom domain. | `npm run type-check`, `npm run build`. |
+| `c24ff57` | Reverted Next.js v16 (upstream regression), completed Phase B upgrades: Zod v4, Lucide v1, Vitest v4. | `npm run type-check`, `npm run build`. |
+| `a8d0ef4` | Updated Shopify Storefront API version from deprecated `2024-01` to `2025-01`. | `npm run type-check`, `npm run build`. |
 | `104d30b` | Applied Pawmeals brand palette to frontend theme tokens and moved **Quiz** immediately after **Katering** in navigation. | `npm run type-check`, `npm run build`, local production route probes, and browser visual check. |
 | `a0736c9` | Added CMS navigation fallbacks and legacy route aliases for implemented public routes. | `npm run type-check`, `npm run build`, and local production route probes. |
 
