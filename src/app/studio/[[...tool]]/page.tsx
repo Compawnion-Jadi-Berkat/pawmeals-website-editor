@@ -1,9 +1,9 @@
 /**
  * Embedded Sanity Studio — served at /studio
  *
- * Sanity Studio v5 uses React 19 hooks (useEffectEvent) that are not available
- * in the server bundle. We must lazy-load BOTH NextStudio AND sanity.config
- * inside the same dynamic import so that neither ever touches the SSR bundle.
+ * The root embedded Studio currently uses the root Sanity dependency set.
+ * We lazy-load BOTH NextStudio AND sanity.config inside the same dynamic import
+ * so neither touches the SSR bundle.
  *
  * Access: https://your-domain.com/studio
  * Auth: Sanity OAuth (must have access to project lr00lxe1)

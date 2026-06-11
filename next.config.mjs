@@ -78,6 +78,30 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/:locale(id|en)/vet-exclusive",
+        destination: "/:locale/vet",
+        permanent: true,
+        locale: false,
+      },
+      {
+        source: "/:locale(id|en)/pawrenting",
+        destination: "/:locale/blog",
+        permanent: true,
+        locale: false,
+      },
+      {
+        source: "/vet-exclusive",
+        destination: "/id/vet",
+        permanent: true,
+        locale: false,
+      },
+      {
+        source: "/pawrenting",
+        destination: "/id/blog",
+        permanent: true,
+        locale: false,
+      },
+      {
         source: "/products",
         destination: "/id/products",
         permanent: false,

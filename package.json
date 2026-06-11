@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "type-check": "tsc --noEmit",
     "sanity:dev": "sanity dev",
-    "sanity:deploy": "sanity deploy",
+    "sanity:deploy": "npm --prefix studio run deploy",
+    "sanity:deploy:root-v4": "sanity deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"
@@ -78,6 +79,9 @@
     "@testing-library/react": "^16.0.1",
     "@testing-library/jest-dom": "^6.5.0",
     "sanity": "^4.22.0",
-    "@sanity/vision": "^4.22.0"
+    "tailwindcss": "^3.4.11",
+    "tailwindcss-animate": "^1.0.7",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
   }
 }

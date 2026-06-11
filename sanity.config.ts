@@ -4,8 +4,9 @@
  * Project ID: lr00lxe1
  * Dataset: production
  *
- * Run locally:  pnpm sanity:dev  → http://localhost:3333
- * Deploy:       pnpm sanity:deploy
+ * Embedded locally through Next.js:  npm run dev  → http://localhost:3000/studio
+ * Standalone v5 deploy:             npm run sanity:deploy
+ * Legacy root v4 deploy:            npm run sanity:deploy:root-v4
  *
  * Content structure mirrors the UAT spec (WebsiteDevelopment.xlsx, Sheet 3):
  *   Singletons: Homepage, Catering Page, About Us, Vet Exclusive Page
@@ -21,6 +22,9 @@ const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
 
 export default defineConfig({
+  // Required when Studio is embedded at /studio; without this Sanity can
+  // interpret /studio as an unknown tool route and show “tool not found”.
+  basePath: "/studio",
   name: "pawmeals-studio",
   title: "Pawmeals Studio",
 
@@ -33,39 +37,55 @@ export default defineConfig({
         S.list()
           .title("Pawmeals Content")
           .items([
+            // ── Global Settings ─────────────────────────────────────────────
+            S.listItem()
+              .title("Site Settings")
+              .id("siteSettings")
+              .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+
+            S.divider(),
+
             // ── Page Singletons ──────────────────────────────────────────────
             S.listItem()
-              .title("🏠 Homepage")
+              .title("Homepage")
               .id("homepage")
               .child(S.document().schemaType("homepage").documentId("homepage")),
 
             S.listItem()
-              .title("🍽️ Catering Page")
+              .title("Catering Page")
               .id("cateringPage")
               .child(S.document().schemaType("cateringPage").documentId("cateringPage")),
 
             S.listItem()
-              .title("ℹ️ About Us")
+              .title("About Us")
               .id("aboutPage")
               .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
 
             S.listItem()
-              .title("🏥 Vet Exclusive Page")
+              .title("Vet Exclusive Page")
               .id("vetExclusivePage")
               .child(S.document().schemaType("vetExclusivePage").documentId("vetExclusivePage")),
 
             S.divider(),
 
+            // ── Commerce and Quiz Content ───────────────────────────────────
+            S.documentTypeListItem("productCategory").title("Product Categories"),
+            S.documentTypeListItem("product").title("Products"),
+            S.documentTypeListItem("quizQuestion").title("Quiz Questions"),
+            S.documentTypeListItem("quizResult").title("Quiz Results"),
+
+            S.divider(),
+
             // ── Content Collections ──────────────────────────────────────────
-            S.documentTypeListItem("pawrentingTip").title("🐾 Pawrenting Tips"),
-            S.documentTypeListItem("blogPost").title("📝 Blog Posts"),
-            S.documentTypeListItem("vetArticle").title("🩺 Vet Articles"),
-            S.documentTypeListItem("faq").title("❓ FAQs"),
+            S.documentTypeListItem("pawrentingTip").title("Pawrenting Tips"),
+            S.documentTypeListItem("blogPost").title("Blog Posts"),
+            S.documentTypeListItem("vetArticle").title("Vet Articles"),
+            S.documentTypeListItem("faq").title("FAQs"),
 
             S.divider(),
 
             // ── People ───────────────────────────────────────────────────────
-            S.documentTypeListItem("author").title("👤 Authors / Vets"),
+            S.documentTypeListItem("author").title("Authors / Vets"),
           ]),
     }),
     visionTool(),
@@ -73,5 +93,15 @@ export default defineConfig({
 
   schema: {
     types: schemaTypes,
+  },
+
+  document: {
+    actions: (prev, { schemaType }) => {
+      const singletons = ["homepage", "cateringPage", "aboutPage", "vetExclusivePage", "siteSettings"];
+      if (singletons.includes(schemaType)) {
+        return prev.filter(({ action }) => action !== "delete" && action !== "duplicate");
+      }
+      return prev;
+    },
   },
 });

@@ -1,0 +1,23 @@
+filters:
+  and:
+    - 'type == "runbook"'
+properties:
+  file.name:
+    displayName: "Runbook"
+  subsystem:
+    displayName: "Subsystem"
+  severity:
+    displayName: "Severity"
+  status:
+    displayName: "Status"
+  updated:
+    displayName: "Updated"
+views:
+  - type: table
+    name: "Runbooks"
+    order:
+      - file.name
+      - subsystem
+      - severity
+      - status
+      - updated

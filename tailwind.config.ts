@@ -9,41 +9,42 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // ─── PAWMEALS BRAND PALETTE ───────────────────────────────────────────
-      // Source: February 2026 Brand Playbook — Warm, no cool tones
+      // ─── PAWMEALS OFFICIAL BRAND PALETTE ──────────────────────────────────
+      // Source: Pawmeals Brand Guidelines for External Usage, v1 14.11.25
       colors: {
-        // Primary brand colours
-        "pm-cream": "#FAF6F0",        // Main background — warm white
-        "pm-cream-dark": "#F2EBE0",   // Slightly deeper cream for sections
-        "pm-sand": "#E8D5B7",         // Warm sand — borders, dividers
-        "pm-caramel": "#C8956C",      // Primary CTA — warm caramel
-        "pm-caramel-dark": "#A87550", // Hover state for CTA
-        "pm-brown": "#6B3F2A",        // Deep brown — headings, logo
-        "pm-brown-light": "#8B5E3C",  // Medium brown — body text
-        "pm-terracotta": "#D4704A",   // Accent — badges, highlights
-        "pm-sage": "#7A9E7E",         // Secondary accent — vet/health
-        "pm-sage-light": "#A8C5AB",   // Light sage — backgrounds
-        "pm-gold": "#D4A853",         // Premium accent — star ratings
-        "pm-white": "#FFFFFF",        // Pure white — cards
-        "pm-charcoal": "#2C1810",     // Near-black — body text on light bg
+        // Official brand colours, mapped onto existing utility names for a minimal safe refresh.
+        "pm-cream": "#FAE7D8",        // Pawmeals beige — section / hover base
+        "pm-cream-dark": "#F4DED0",   // Deeper beige tint for layered surfaces
+        "pm-ivory": "#FDFDFE",        // Pawmeals white — page and glass base
+        "pm-sand": "#E8D5CA",         // Warm beige border derived from brand beige
+        "pm-caramel": "#D8615A",      // Pawmeals red — primary CTA and active states
+        "pm-caramel-dark": "#B94F49", // Accessible red hover state
+        "pm-brown": "#323232",        // Pawmeals charcoal — headings and nav text
+        "pm-brown-light": "#6F5F59",  // Warm muted text on beige/white
+        "pm-terracotta": "#D8615A",   // Red accent alias
+        "pm-sage": "#CFCFCE",         // Pawmeals grey — support / neutral surfaces
+        "pm-sage-light": "#E8E8E7",   // Light grey tint
+        "pm-gold": "#F2B943",         // Pawmeals yellow — premium highlights
+        "pm-white": "#FDFDFE",        // Pawmeals white
+        "pm-charcoal": "#323232",     // Pawmeals charcoal
 
         // Semantic aliases
         brand: {
-          primary: "#C8956C",
-          "primary-dark": "#A87550",
-          secondary: "#6B3F2A",
-          accent: "#D4704A",
-          bg: "#FAF6F0",
-          "bg-alt": "#F2EBE0",
-          text: "#2C1810",
-          "text-muted": "#8B5E3C",
-          border: "#E8D5B7",
+          primary: "#D8615A",
+          "primary-dark": "#B94F49",
+          secondary: "#323232",
+          accent: "#F2B943",
+          bg: "#FDFDFE",
+          "bg-alt": "#FAE7D8",
+          text: "#323232",
+          "text-muted": "#6F5F59",
+          border: "#E8D5CA",
         },
 
-        // Status colours (warm variants — no cool blues)
-        success: "#5A8A5A",
-        warning: "#D4A853",
-        error: "#C0392B",
+        // Status colours harmonized with the official warm palette.
+        success: "#6E8F6A",
+        warning: "#F2B943",
+        error: "#D8615A",
       },
 
       // ─── TYPOGRAPHY ───────────────────────────────────────────────────────
@@ -103,15 +104,15 @@ const config: Config = {
 
       // ─── SHADOWS (warm-toned, no cool greys) ─────────────────────────────
       boxShadow: {
-        "warm-sm": "0 1px 3px 0 rgba(107, 63, 42, 0.08), 0 1px 2px -1px rgba(107, 63, 42, 0.06)",
-        "warm-md": "0 4px 6px -1px rgba(107, 63, 42, 0.1), 0 2px 4px -2px rgba(107, 63, 42, 0.08)",
-        "warm-lg": "0 10px 15px -3px rgba(107, 63, 42, 0.1), 0 4px 6px -4px rgba(107, 63, 42, 0.08)",
-        "warm-xl": "0 20px 25px -5px rgba(107, 63, 42, 0.1), 0 8px 10px -6px rgba(107, 63, 42, 0.08)",
-        "warm-2xl": "0 25px 50px -12px rgba(107, 63, 42, 0.2)",
-        "card": "0 2px 8px rgba(107, 63, 42, 0.08), 0 0 0 1px rgba(232, 213, 183, 0.4)",
-        "card-hover": "0 8px 24px rgba(107, 63, 42, 0.12), 0 0 0 1px rgba(200, 149, 108, 0.3)",
-        "cta": "0 4px 14px rgba(200, 149, 108, 0.4)",
-        "cta-hover": "0 6px 20px rgba(200, 149, 108, 0.5)",
+        "warm-sm": "0 1px 3px 0 rgba(50, 50, 50, 0.08), 0 1px 2px -1px rgba(50, 50, 50, 0.06)",
+        "warm-md": "0 4px 6px -1px rgba(50, 50, 50, 0.10), 0 2px 4px -2px rgba(50, 50, 50, 0.08)",
+        "warm-lg": "0 10px 15px -3px rgba(50, 50, 50, 0.10), 0 4px 6px -4px rgba(50, 50, 50, 0.08)",
+        "warm-xl": "0 20px 25px -5px rgba(50, 50, 50, 0.10), 0 8px 10px -6px rgba(50, 50, 50, 0.08)",
+        "warm-2xl": "0 25px 50px -12px rgba(50, 50, 50, 0.20)",
+        "card": "0 2px 8px rgba(50, 50, 50, 0.08), 0 0 0 1px rgba(250, 231, 216, 0.60)",
+        "card-hover": "0 8px 24px rgba(107, 63, 42, 0.12), 0 0 0 1px rgba(216, 97, 90, 0.28)",
+        "cta": "0 4px 14px rgba(216, 97, 90, 0.34)",
+        "cta-hover": "0 6px 20px rgba(216, 97, 90, 0.44)",
       },
 
       // ─── ANIMATIONS ───────────────────────────────────────────────────────
@@ -159,9 +160,9 @@ const config: Config = {
       backgroundImage: {
         "paw-pattern": "url('/images/paw-pattern.svg')",
         "grain": "url('/images/grain.png')",
-        "hero-gradient": "linear-gradient(135deg, #FAF6F0 0%, #F2EBE0 50%, #E8D5B7 100%)",
-        "card-gradient": "linear-gradient(180deg, rgba(250,246,240,0) 0%, rgba(242,235,224,0.8) 100%)",
-        "cta-gradient": "linear-gradient(135deg, #C8956C 0%, #A87550 100%)",
+        "hero-gradient": "linear-gradient(135deg, #FDFDFE 0%, #FAE7D8 58%, #F2B943 135%)",
+        "card-gradient": "linear-gradient(180deg, rgba(253,253,254,0) 0%, rgba(250,231,216,0.78) 100%)",
+        "cta-gradient": "linear-gradient(135deg, #D8615A 0%, #B94F49 100%)",
       },
 
       // ─── TRANSITIONS ─────────────────────────────────────────────────────

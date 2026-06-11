@@ -1,72 +1,71 @@
-import React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Instagram } from "lucide-react";
-import type { Locale } from "@/lib/i18n/config";
 
-interface InstagramFeedProps {
-  locale: Locale;
+interface InstagramPost {
+  label?: string;
+  url?: string;
+  image?: { asset?: { url: string }; alt?: string };
 }
 
-export function InstagramFeed({ locale }: InstagramFeedProps) {
-  // Placeholder grid — replace with real Instagram Basic Display API or Curator.io embed
-  const placeholderPosts = Array.from({ length: 6 }, (_, i) => ({
-    id: `ig-${i}`,
-    emoji: ["🐕", "🐈", "🥩", "🐾", "🌿", "❤️"][i],
-    bg: [
-      "from-pm-caramel/20 to-pm-sand/30",
-      "from-pm-sage/20 to-pm-cream",
-      "from-pm-brown/10 to-pm-caramel/10",
-      "from-pm-sand/40 to-pm-cream-dark",
-      "from-green-50 to-pm-sage/10",
-      "from-red-50 to-pm-caramel/10",
-    ][i],
-  }));
+interface InstagramFeedContent {
+  handle?: string;
+  headline?: string;
+  ctaText?: string;
+  url?: string;
+  posts?: InstagramPost[];
+}
+
+interface InstagramFeedProps {
+  content: InstagramFeedContent | null;
+}
+
+export function InstagramFeed({ content }: InstagramFeedProps) {
+  if (!content?.headline && !content?.handle && !content?.posts?.length) return null;
+  const feedUrl = content?.url || undefined;
 
   return (
-    <section className="section-padding bg-pm-cream" aria-labelledby="instagram-heading">
+    <section className="section-padding bg-pm-cream">
       <div className="container">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 text-pm-brown/70 mb-3">
-            <Instagram className="w-5 h-5" />
-            <span className="font-bold text-body-sm">@pawmeals.id</span>
+          {content?.handle && (
+            <div className="inline-flex items-center gap-2 text-pm-brown/70 mb-3">
+              <Instagram className="w-5 h-5" aria-hidden="true" />
+              <span className="font-bold text-body-sm">{content.handle}</span>
+            </div>
+          )}
+          {content?.headline && <h2 className="font-heading text-2xl sm:text-3xl font-bold text-pm-brown">{content.headline}</h2>}
+        </div>
+
+        {content?.posts?.length ? (
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 mb-6">
+            {content.posts.map((post, index) => {
+              const href = post.url || feedUrl;
+              if (!post.image?.asset?.url) return null;
+              const tile = (
+                <div className="group aspect-square rounded-2xl border border-pm-sand/50 bg-white overflow-hidden hover:-translate-y-1 hover:shadow-warm-md transition-all duration-200">
+                  <Image src={post.image.asset.url} alt={post.image.alt || post.label || content.handle || "Instagram post"} width={320} height={320} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                </div>
+              );
+              return href ? (
+                <Link key={`${post.label}-${index}`} href={href} target="_blank" rel="noopener noreferrer" aria-label={post.label || content.handle || "Instagram"}>
+                  {tile}
+                </Link>
+              ) : (
+                <div key={`${post.label}-${index}`}>{tile}</div>
+              );
+            })}
           </div>
-          <h2
-            id="instagram-heading"
-            className="font-heading text-2xl sm:text-3xl font-bold text-pm-brown"
-          >
-            {locale === "id"
-              ? "Ikuti Perjalanan Kami di Instagram"
-              : "Follow Our Journey on Instagram"}
-          </h2>
-        </div>
+        ) : null}
 
-        {/* Instagram Grid */}
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 mb-6">
-          {placeholderPosts.map((post) => (
-            <Link
-              key={post.id}
-              href="https://instagram.com/pawmeals.id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`aspect-square rounded-xl bg-gradient-to-br ${post.bg} flex items-center justify-center text-4xl hover:opacity-80 hover:scale-105 transition-all duration-200 overflow-hidden`}
-              aria-label="View on Instagram"
-            >
-              {post.emoji}
+        {feedUrl && content?.ctaText && (
+          <div className="text-center">
+            <Link href={feedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-pm-brown/20 text-pm-brown font-bold px-6 py-3 rounded-pill hover:border-pm-caramel hover:text-pm-caramel transition-colors">
+              <Instagram className="w-4 h-4" aria-hidden="true" />
+              {content.ctaText}
             </Link>
-          ))}
-        </div>
-
-        <div className="text-center">
-          <Link
-            href="https://instagram.com/pawmeals.id"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border-2 border-pm-brown/20 text-pm-brown font-bold px-6 py-3 rounded-pill hover:border-pm-caramel hover:text-pm-caramel transition-colors"
-          >
-            <Instagram className="w-4 h-4" />
-            {locale === "id" ? "Ikuti @pawmeals.id" : "Follow @pawmeals.id"}
-          </Link>
-        </div>
+          </div>
+        )}
       </div>
     </section>
   );

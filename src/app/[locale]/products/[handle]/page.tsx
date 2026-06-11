@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProductByHandle } from "@/lib/shopify";
+import { getSanityProductByHandle } from "@/lib/sanity/client";
 import { ProductDetail } from "@/components/products/ProductDetail";
 import { ProductSchema, BreadcrumbSchema } from "@/components/seo/OrganizationSchema";
 import type { Locale } from "@/lib/i18n/config";
@@ -12,7 +12,7 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { locale, handle } = await params;
-  const product = await getProductByHandle(handle).catch(() => null);
+  const product = await getSanityProductByHandle(handle, locale).catch(() => null);
 
   if (!product) {
     return { title: "Product Not Found" };
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { locale, handle } = await params;
-  const product = await getProductByHandle(handle).catch(() => null);
+  const product = await getSanityProductByHandle(handle, locale).catch(() => null);
 
   if (!product) {
     notFound();

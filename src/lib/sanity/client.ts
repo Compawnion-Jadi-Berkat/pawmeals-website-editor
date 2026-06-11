@@ -1,20 +1,71 @@
 import { createClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import type { WebsiteProduct } from "@/types/site-content";
 
-const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || "lr00lxe1";
-const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || "production";
-// Sanity is always configured — project ID lr00lxe1 is hardcoded as fallback
+const CANONICAL_SANITY_PROJECT_ID = "lr00lxe1";
+const CANONICAL_SANITY_DATASET = "production";
+const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || CANONICAL_SANITY_PROJECT_ID;
+const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || CANONICAL_SANITY_DATASET;
+// Sanity is always configured — Pawmeals Studio lives in the canonical project.
 const isSanityConfigured = true;
+const shouldTryCanonicalFallback =
+  projectId !== CANONICAL_SANITY_PROJECT_ID || dataset !== CANONICAL_SANITY_DATASET;
 
 export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion: "2024-01-01",
-  useCdn: process.env.NODE_ENV === "production",
-  token: process.env.SANITY_API_TOKEN,
+  // Default to the live API so Studio publishes are reflected immediately on the website.
+  // Set NEXT_PUBLIC_SANITY_USE_CDN=true only if cached reads are intentionally preferred.
+  useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
+  // Published website content is public. Avoid attaching SANITY_API_TOKEN here because
+  // a stale or invalid Vercel token makes otherwise public reads fail and empties pages.
   perspective: "published",
 });
+
+const canonicalSanityClient = createClient({
+  projectId: CANONICAL_SANITY_PROJECT_ID,
+  dataset: CANONICAL_SANITY_DATASET,
+  apiVersion: "2024-01-01",
+  useCdn: process.env.NEXT_PUBLIC_SANITY_USE_CDN === "true",
+  // Published website content is public. Avoid attaching SANITY_API_TOKEN here because
+  // a stale or invalid Vercel token makes otherwise public reads fail and empties pages.
+  perspective: "published",
+});
+
+async function fetchWithCanonicalFallback<T>(
+  query: string,
+  params: Record<string, unknown> = {},
+  isUsable: (value: T | null | undefined) => boolean,
+  label: string,
+  fallbackValue: T,
+): Promise<T> {
+  try {
+    const primaryResult = await sanityClient.fetch<T>(query, params);
+    if (isUsable(primaryResult)) return primaryResult;
+
+    if (shouldTryCanonicalFallback) {
+      const canonicalResult = await canonicalSanityClient.fetch<T>(query, params);
+      if (isUsable(canonicalResult)) return canonicalResult;
+    }
+
+    return primaryResult ?? fallbackValue;
+  } catch (primaryError) {
+    console.warn(`[Sanity] ${label} primary fetch failed:`, primaryError);
+
+    if (shouldTryCanonicalFallback) {
+      try {
+        const canonicalResult = await canonicalSanityClient.fetch<T>(query, params);
+        if (isUsable(canonicalResult)) return canonicalResult;
+      } catch (canonicalError) {
+        console.warn(`[Sanity] ${label} canonical fallback failed:`, canonicalError);
+      }
+    }
+
+    return fallbackValue;
+  }
+}
 
 // Image URL builder
 const builder = imageUrlBuilder(sanityClient);
@@ -132,7 +183,15 @@ export const VET_ARTICLES_QUERY = `
 `;
 
 export const HOMEPAGE_QUERY = `
-  *[_type == "homepage" && !(_id in path("drafts.**"))][0] {
+  *[
+    _type == "homepage"
+    && !(_id in path("drafts.**"))
+    && (
+      language == $locale
+      || _id == "homepage__" + $locale
+      || (!defined(language) && $locale == "id")
+    )
+  ] | order(select(_id == "homepage__" + $locale => 0, language == $locale => 1, 2))[0] {
     heroSlides[] {
       headline,
       subheadline,
@@ -159,7 +218,193 @@ export const HOMEPAGE_QUERY = `
       location,
       quote,
       photo { asset->{ _id, url } }
+    },
+    quizCta {
+      eyebrow,
+      headline,
+      description,
+      primaryCtaText,
+      primaryCtaLink,
+      secondaryCtaText,
+      secondaryCtaLink,
+      highlights
+    },
+    instagramFeed {
+      handle,
+      headline,
+      ctaText,
+      url,
+      posts[] {
+        label,
+        url,
+        image { asset->{ _id, url }, alt }
+      }
+    },
+    newsletterSignup {
+      headline,
+      description,
+      placeholder,
+      buttonText,
+      successMessage,
+      invalidEmailMessage,
+      errorMessage,
+      privacyText,
+      perks
     }
+  }
+`;
+
+export const SITE_SETTINGS_QUERY = `
+  *[_type == "siteSettings" && _id == "siteSettings" && !(_id in path("drafts.**"))][0] {
+    brandName,
+    tagline,
+    logo { asset->{ _id, url }, alt },
+    defaultOgImage { asset->{ _id, url }, alt },
+    navItems[] { label, href },
+    footerLinks[] { label, href, group },
+    socials[] { platform, url },
+    whatsappNumber,
+    email,
+    phone,
+    location,
+    vetClinicCount,
+    primaryColor,
+    accentColor
+  }
+`;
+
+export const PRODUCT_CATEGORIES_QUERY = `
+  *[_type == "productCategory" && !(_id in path("drafts.**"))] | order(coalesce(order, 100) asc, title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    description,
+    icon,
+    order
+  }
+`;
+
+export const SANITY_PRODUCTS_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ] | order(coalesce(sortOrder, 100) asc, title asc) {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const SANITY_PRODUCT_BY_HANDLE_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && slug.current == $handle
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ][0] {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const FEATURED_SANITY_PRODUCTS_QUERY = `
+  *[
+    _type == "product"
+    && !(_id in path("drafts.**"))
+    && featured == true
+    && (!defined(availableLocales) || $locale in availableLocales)
+  ] | order(coalesce(sortOrder, 100) asc, title asc)[0...4] {
+    _id,
+    title,
+    "handle": slug.current,
+    shortDescription,
+    longDescription,
+    featured,
+    sortOrder,
+    pricingTiers,
+    ingredients,
+    feedingGuide,
+    badges,
+    category->{
+      _id,
+      title,
+      "slug": slug.current,
+      description,
+      icon,
+      order
+    },
+    images[] {
+      asset->{ _id, url, metadata { dimensions } },
+      alt
+    }
+  }
+`;
+
+export const SUBSCRIPTION_PAGE_QUERY = `
+  *[
+    _type == "subscriptionPage"
+    && !(_id in path("drafts.**"))
+    && (
+      language == $locale
+      || _id == "subscriptionPage__" + $locale
+      || (!defined(language) && $locale == "id")
+    )
+  ] | order(select(_id == "subscriptionPage__" + $locale => 0, language == $locale => 1, 2))[0] {
+    heroEyebrow,
+    heroHeadline,
+    heroDescription,
+    heroCtaText,
+    heroCtaLink,
+    discountBadge,
+    perks[] { icon, title, description },
+    stepsHeading,
+    steps[] { icon, title, description },
+    frequencyHeading,
+    frequencies[] { label, badge, savings },
+    finalCtaText,
+    finalCtaLink
   }
 `;
 
@@ -167,6 +412,9 @@ export const CATERING_QUERY = `
   *[_type == "cateringPage" && !(_id in path("drafts.**"))][0] {
     heroHeadline,
     heroSubheadline,
+    heroImage { asset->{ _id, url }, alt },
+    whatsappNumber,
+    ctaText,
     services[] {
       title,
       description,
@@ -188,9 +436,12 @@ export const CATERING_QUERY = `
 
 export const ABOUT_QUERY = `
   *[_type == "aboutPage" && !(_id in path("drafts.**"))][0] {
+    heroHeadline,
+    heroImage { asset->{ _id, url }, alt },
     story,
     mission,
     vision,
+    brandProof[] { stat, description, icon },
     values[] { title, description, icon },
     team[] {
       name,
@@ -230,11 +481,122 @@ export async function getVetArticles() {
   try { return await sanityClient.fetch(VET_ARTICLES_QUERY); }
   catch (e) { console.warn("[Sanity] getVetArticles failed:", e); return []; }
 }
-export async function getHomepageContent() {
+export async function getHomepageContent(locale: string = "id") {
   if (!isSanityConfigured) return null;
-  try { return await sanityClient.fetch(HOMEPAGE_QUERY); }
-  catch (e) { console.warn("[Sanity] getHomepageContent failed:", e); return null; }
+  return fetchWithCanonicalFallback<any | null>(
+    HOMEPAGE_QUERY,
+    { locale },
+    (content) => Boolean(content && (
+      content.heroSlides?.length ||
+      content.whyPawmeals?.length ||
+      content.featuredTestimonials?.length ||
+      content.vetPartners?.length ||
+      content.quizCta ||
+      content.instagramFeed ||
+      content.newsletterSignup
+    )),
+    "getHomepageContent",
+    null,
+  );
 }
+
+function mapSanityProduct(product: any): WebsiteProduct {
+  const firstImage = product.images?.[0];
+  const firstTier = product.pricingTiers?.find((tier: any) => typeof tier?.priceIDR === "number");
+  const fallbackVariantId = `sanity-${product._id || product.handle || product.title}`;
+
+  return {
+    id: product._id,
+    title: product.title,
+    handle: product.handle,
+    description: product.shortDescription,
+    longDescription: product.longDescription,
+    featuredImage: firstImage?.asset?.url
+      ? { url: firstImage.asset.url, altText: firstImage.alt || product.title }
+      : null,
+    images: (product.images || [])
+      .filter((image: any) => image?.asset?.url)
+      .map((image: any) => ({ url: image.asset.url, altText: image.alt || product.title })),
+    tags: [product.category?.slug, ...(product.badges || [])].filter(Boolean),
+    category: product.category || null,
+    pricingTiers: product.pricingTiers || [],
+    ingredients: product.ingredients || [],
+    feedingGuide: product.feedingGuide,
+    priceRange: {
+      minVariantPrice: {
+        amount: String(firstTier?.priceIDR ?? 0),
+        currencyCode: "IDR",
+      },
+    },
+    variants: { edges: [{ node: { id: fallbackVariantId, availableForSale: true } }] },
+    vendor: "Pawmeals",
+    featured: Boolean(product.featured),
+  };
+}
+
+export async function getSiteSettings() {
+  if (!isSanityConfigured) return null;
+  return fetchWithCanonicalFallback<any | null>(
+    SITE_SETTINGS_QUERY,
+    {},
+    (settings) => Boolean(settings && (settings.brandName || settings.navItems?.length || settings.footerLinks?.length)),
+    "getSiteSettings",
+    null,
+  );
+}
+
+export async function getProductCategories() {
+  if (!isSanityConfigured) return [];
+  return fetchWithCanonicalFallback<any[]>(
+    PRODUCT_CATEGORIES_QUERY,
+    {},
+    (categories) => Boolean(categories?.length),
+    "getProductCategories",
+    [],
+  );
+}
+
+export async function getSanityProducts(locale: string = "id") {
+  if (!isSanityConfigured) return [];
+  const products = await fetchWithCanonicalFallback<any[]>(
+    SANITY_PRODUCTS_QUERY,
+    { locale },
+    (items) => Boolean(items?.length),
+    "getSanityProducts",
+    [],
+  );
+  return (products || []).map(mapSanityProduct);
+}
+
+export async function getFeaturedSanityProducts(locale: string = "id") {
+  if (!isSanityConfigured) return [];
+  const products = await fetchWithCanonicalFallback<any[]>(
+    FEATURED_SANITY_PRODUCTS_QUERY,
+    { locale },
+    (items) => Boolean(items?.length),
+    "getFeaturedSanityProducts",
+    [],
+  );
+  return (products || []).map(mapSanityProduct);
+}
+
+export async function getSanityProductByHandle(handle: string, locale: string = "id") {
+  if (!isSanityConfigured) return null;
+  const product = await fetchWithCanonicalFallback<any | null>(
+    SANITY_PRODUCT_BY_HANDLE_QUERY,
+    { handle, locale },
+    (item) => Boolean(item?._id),
+    "getSanityProductByHandle",
+    null,
+  );
+  return product ? mapSanityProduct(product) : null;
+}
+export async function getSubscriptionContent(locale: string = "id") {
+  if (!isSanityConfigured) return null;
+  try { return await sanityClient.fetch(SUBSCRIPTION_PAGE_QUERY, { locale }); }
+  catch (e) { console.warn("[Sanity] getSubscriptionContent failed:", e); return null; }
+}
+
 export async function getCateringContent() {
   if (!isSanityConfigured) return null;
   try { return await sanityClient.fetch(CATERING_QUERY); }

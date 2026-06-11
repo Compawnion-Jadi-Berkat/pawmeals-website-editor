@@ -1,0 +1,34 @@
+filters:
+  or:
+    - 'type == "schema-note"'
+    - 'type == "sanity-map"'
+properties:
+  file.name:
+    displayName: "Note"
+  schema:
+    displayName: "Schema"
+  cardinality:
+    displayName: "Cardinality"
+  source_file:
+    displayName: "Source File"
+  frontend_consumers:
+    displayName: "Frontend Consumers"
+  status:
+    displayName: "Status"
+views:
+  - type: table
+    name: "Schemas and Consumers"
+    order:
+      - file.name
+      - schema
+      - cardinality
+      - source_file
+      - frontend_consumers
+      - status
+  - type: cards
+    name: "Schema Cards"
+    order:
+      - file.name
+      - schema
+      - cardinality
+      - source_file

@@ -1,131 +1,146 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { ShoppingBag, Menu, X, Globe, ChevronDown } from "lucide-react";
+import { ShoppingBag, Menu, X, Globe, ChevronDown, Sparkles } from "lucide-react";
 import { useCart } from "@/components/cart/CartProvider";
 import type { Locale } from "@/lib/i18n/config";
-import { localeNames, localeFlags } from "@/lib/i18n/config";
+import { localeNames } from "@/lib/i18n/config";
 import { CartDrawer } from "@/components/cart/CartDrawer";
+import type { SiteNavItem, SiteSettingsContent } from "@/types/site-content";
+import { getFallbackNavItems, normalizePublicHref, prioritizeQuizAfterCatering } from "@/lib/navigation";
 
 interface NavbarProps {
   locale: Locale;
+  siteSettings?: SiteSettingsContent | null;
 }
 
-const navLinks = (locale: Locale) => [
-  { href: `/${locale}/products`, labelKey: "products" },
-  { href: `/${locale}/catering`, labelKey: "catering" },
-  { href: `/${locale}/quiz`, labelKey: "quiz" },
-  { href: `/${locale}/blog`, labelKey: "blog" },
-  { href: `/${locale}/vet`, labelKey: "vet" },
-  { href: `/${locale}/about`, labelKey: "about" },
-  { href: `/${locale}/faqs`, labelKey: "faqs" },
-];
-
-export function Navbar({ locale }: NavbarProps) {
-  const t = useTranslations("nav");
-  const { totalQuantity, toggleCart, isOpen } = useCart();
+export function Navbar({ locale, siteSettings }: NavbarProps) {
+  const { totalQuantity, toggleCart } = useCart();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
 
-  // Detect scroll for navbar style change
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setIsMobileOpen(false);
+    setIsMoreOpen(false);
   }, [pathname]);
 
+  const navItems = useMemo<SiteNavItem[]>(() => {
+    const studioNavItems = (siteSettings?.navItems || [])
+      .filter((item) => item?.label && item?.href)
+      .map((item) => ({ label: item.label, href: normalizePublicHref(item.href, locale) }));
+
+    return studioNavItems.length > 0 ? prioritizeQuizAfterCatering(studioNavItems) : getFallbackNavItems(locale);
+  }, [locale, siteSettings?.navItems]);
+
+  const primaryLinks = navItems.slice(0, 4);
+  const secondaryLinks = navItems.slice(4);
+  const allMobileLinks = navItems;
+  const brandName = siteSettings?.brandName || "Pawmeals";
+  const tagline = siteSettings?.tagline;
   const otherLocale: Locale = locale === "id" ? "en" : "id";
   const safePath = pathname ?? "/";
   const otherLocalePath = safePath.replace(`/${locale}`, `/${otherLocale}`);
+  const localeShortLabels: Record<Locale, string> = { id: "ID", en: "EN" };
 
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled || isMobileOpen
-            ? "bg-white/95 backdrop-blur-md shadow-warm-sm border-b border-pm-sand/50"
-            : "bg-transparent"
+            ? "bg-white/92 backdrop-blur-xl shadow-warm-sm border-b border-pm-sand/50"
+            : "bg-white/55 backdrop-blur-md border-b border-white/30"
         }`}
         style={{ height: "var(--nav-height)" }}
       >
         <div className="container h-full flex items-center justify-between gap-4">
-          {/* Logo */}
-          <Link
-            href={`/${locale}`}
-            className="flex items-center gap-2 flex-shrink-0 group"
-            aria-label="Pawmeals — Home"
-          >
-            <div className="w-9 h-9 rounded-xl bg-pm-caramel flex items-center justify-center shadow-warm-sm group-hover:shadow-warm-md transition-shadow">
-              <span className="text-white text-lg font-heading font-bold">P</span>
+          <Link href={`/${locale}`} className="flex items-center gap-2.5 flex-shrink-0 group" aria-label={`${brandName} — Home`}>
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-pm-brown to-pm-caramel flex items-center justify-center shadow-warm-md group-hover:shadow-warm-lg transition-all duration-300 group-hover:-translate-y-0.5">
+              <Sparkles className="w-5 h-5 text-white" aria-hidden="true" />
             </div>
-            <span className="font-heading font-bold text-xl text-pm-brown hidden sm:block">
-              Pawmeals
-            </span>
+            <div className="hidden sm:block leading-none">
+              <span className="font-heading font-bold text-xl text-pm-brown block">{brandName}</span>
+              {tagline && <span className="text-[0.62rem] uppercase tracking-[0.18em] font-bold text-pm-caramel-dark">{tagline}</span>}
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
-            {navLinks(locale).map((link) => {
-              const isActive = safePath === link.href || safePath.startsWith(link.href + "/");
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-3 py-2 rounded-lg text-body-sm font-semibold transition-all duration-200 ${
-                    isActive
-                      ? "text-pm-caramel bg-pm-caramel/10"
-                      : "text-pm-brown hover:text-pm-caramel hover:bg-pm-cream-dark"
-                  }`}
-                >
-                  {t(link.labelKey)}
-                </Link>
-              );
-            })}
-          </nav>
+          {navItems.length > 0 && (
+            <nav className="hidden lg:flex items-center gap-1 rounded-pill bg-white/68 border border-pm-sand/45 p-1 shadow-warm-sm" aria-label="Main navigation">
+              {primaryLinks.map((link) => {
+                const isActive = safePath === link.href || safePath.startsWith(link.href + "/");
+                return (
+                  <Link
+                    key={`${link.href}-${link.label}`}
+                    href={link.href}
+                    className={`px-4 py-2 rounded-pill text-body-sm font-bold transition-all duration-200 ${
+                      isActive ? "text-white bg-pm-brown shadow-warm-sm" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              {secondaryLinks.length > 0 && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsMoreOpen(!isMoreOpen)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-pill text-body-sm font-bold text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream transition-all duration-200 cursor-pointer"
+                    aria-expanded={isMoreOpen}
+                  >
+                    {locale === "id" ? "Lainnya" : "More"}
+                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isMoreOpen ? "rotate-180" : ""}`} />
+                  </button>
+                  {isMoreOpen && (
+                    <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-warm-lg border border-pm-sand/50 overflow-hidden min-w-[180px] animate-scale-in p-1">
+                      {secondaryLinks.map((link) => (
+                        <Link key={`${link.href}-${link.label}`} href={link.href} className="block px-4 py-2.5 rounded-xl text-body-sm font-bold text-pm-brown hover:bg-pm-cream hover:text-pm-caramel-dark transition-colors">
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </nav>
+          )}
 
-          {/* Right Actions */}
           <div className="flex items-center gap-2">
-            {/* Language Switcher */}
             <div className="relative hidden sm:block">
               <button
+                type="button"
                 onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-body-sm font-semibold text-pm-brown hover:bg-pm-cream-dark transition-all duration-200"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-body-sm font-bold text-pm-brown hover:bg-white transition-all duration-200 cursor-pointer"
                 aria-label="Switch language"
                 aria-expanded={isLangOpen}
               >
                 <Globe className="w-4 h-4" />
-                <span>{localeFlags[locale]}</span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 transition-transform duration-200 ${
-                    isLangOpen ? "rotate-180" : ""
-                  }`}
-                />
+                <span className="min-w-6 rounded-full bg-pm-cream px-2 py-0.5 text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[locale]}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isLangOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isLangOpen && (
-                <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-warm-lg border border-pm-sand/50 overflow-hidden min-w-[160px] animate-scale-in">
+                <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-warm-lg border border-pm-sand/50 overflow-hidden min-w-[160px] animate-scale-in p-1">
                   {(["id", "en"] as Locale[]).map((loc) => (
                     <Link
                       key={loc}
                       href={loc === locale ? safePath : otherLocalePath}
                       onClick={() => setIsLangOpen(false)}
-                      className={`flex items-center gap-2.5 px-4 py-2.5 text-body-sm font-semibold transition-colors ${
-                        loc === locale
-                          ? "bg-pm-caramel/10 text-pm-caramel"
-                          : "text-pm-brown hover:bg-pm-cream-dark"
+                      className={`flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-body-sm font-bold transition-colors ${
+                        loc === locale ? "bg-pm-caramel/10 text-pm-caramel-dark" : "text-pm-brown hover:bg-pm-cream"
                       }`}
                     >
-                      <span>{localeFlags[loc]}</span>
+                      <span className="min-w-8 rounded-full bg-pm-cream px-2 py-1 text-center text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[loc]}</span>
                       <span>{localeNames[loc]}</span>
                     </Link>
                   ))}
@@ -133,10 +148,10 @@ export function Navbar({ locale }: NavbarProps) {
               )}
             </div>
 
-            {/* Cart Button */}
             <button
+              type="button"
               onClick={toggleCart}
-              className="relative flex items-center justify-center w-10 h-10 rounded-xl text-pm-brown hover:bg-pm-cream-dark transition-all duration-200"
+              className="relative flex items-center justify-center w-11 h-11 rounded-2xl text-pm-brown bg-white/70 hover:bg-white hover:shadow-warm-sm transition-all duration-200 cursor-pointer"
               aria-label={`Cart (${totalQuantity} items)`}
             >
               <ShoppingBag className="w-5 h-5" />
@@ -147,52 +162,47 @@ export function Navbar({ locale }: NavbarProps) {
               )}
             </button>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl text-pm-brown hover:bg-pm-cream-dark transition-all duration-200"
-              aria-label={isMobileOpen ? "Close menu" : "Open menu"}
-              aria-expanded={isMobileOpen}
-            >
-              {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {allMobileLinks.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="lg:hidden flex items-center justify-center w-11 h-11 rounded-2xl text-pm-brown bg-white/70 hover:bg-white transition-all duration-200 cursor-pointer"
+                aria-label={isMobileOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMobileOpen}
+              >
+                {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMobileOpen && (
+        {isMobileOpen && allMobileLinks.length > 0 && (
           <div className="lg:hidden bg-white border-t border-pm-sand/50 shadow-warm-lg animate-fade-in">
             <nav className="container py-4 flex flex-col gap-1" aria-label="Mobile navigation">
-              {navLinks(locale).map((link) => {
+              {allMobileLinks.map((link) => {
                 const isActive = safePath === link.href;
                 return (
                   <Link
-                    key={link.href}
+                    key={`${link.href}-${link.label}`}
                     href={link.href}
-                    className={`px-4 py-3 rounded-xl text-body-md font-semibold transition-all duration-200 ${
-                      isActive
-                        ? "text-pm-caramel bg-pm-caramel/10"
-                        : "text-pm-brown hover:text-pm-caramel hover:bg-pm-cream-dark"
+                    className={`px-4 py-3 rounded-xl text-body-md font-bold transition-all duration-200 ${
+                      isActive ? "text-white bg-pm-brown" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
                     }`}
                   >
-                    {t(link.labelKey)}
+                    {link.label}
                   </Link>
                 );
               })}
-
-              {/* Language switcher in mobile */}
               <div className="mt-2 pt-2 border-t border-pm-sand/50 flex gap-2">
                 {(["id", "en"] as Locale[]).map((loc) => (
                   <Link
                     key={loc}
                     href={loc === locale ? safePath : otherLocalePath}
-                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-body-sm font-semibold transition-colors flex-1 justify-center ${
-                      loc === locale
-                        ? "bg-pm-caramel/10 text-pm-caramel"
-                        : "text-pm-brown hover:bg-pm-cream-dark"
+                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-body-sm font-bold transition-colors flex-1 justify-center ${
+                      loc === locale ? "bg-pm-caramel/10 text-pm-caramel-dark" : "text-pm-brown hover:bg-pm-cream"
                     }`}
                   >
-                    <span>{localeFlags[loc]}</span>
+                    <span className="min-w-8 rounded-full bg-pm-cream px-2 py-1 text-center text-[0.68rem] tracking-[0.14em] text-pm-caramel-dark">{localeShortLabels[loc]}</span>
                     <span>{localeNames[loc]}</span>
                   </Link>
                 ))}
@@ -202,14 +212,15 @@ export function Navbar({ locale }: NavbarProps) {
         )}
       </header>
 
-      {/* Cart Drawer */}
       <CartDrawer locale={locale} />
 
-      {/* Backdrop for language dropdown */}
-      {isLangOpen && (
+      {(isLangOpen || isMoreOpen) && (
         <div
           className="fixed inset-0 z-40"
-          onClick={() => setIsLangOpen(false)}
+          onClick={() => {
+            setIsLangOpen(false);
+            setIsMoreOpen(false);
+          }}
           aria-hidden="true"
         />
       )}
