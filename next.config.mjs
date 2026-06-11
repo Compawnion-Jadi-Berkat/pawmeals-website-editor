@@ -16,6 +16,11 @@ const nextConfig = {
         hostname: "*.myshopify.com",
       },
       {
+        // Shopify custom domain (pawmeals-headless.pawmeals.co)
+        protocol: "https",
+        hostname: "*.pawmeals.co",
+      },
+      {
         protocol: "https",
         hostname: "cdn.sanity.io",
         pathname: "/images/**",
