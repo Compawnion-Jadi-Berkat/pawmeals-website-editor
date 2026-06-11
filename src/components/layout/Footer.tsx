@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Instagram, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Camera, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import type { Locale } from "@/lib/i18n/config";
 import type { SiteFooterLink, SiteSettingsContent } from "@/types/site-content";
 import { getFallbackFooterLinks, normalizePublicHref } from "@/lib/navigation";
@@ -12,7 +12,7 @@ interface FooterProps {
 }
 
 function socialIcon(platform?: string) {
-  if (platform === "instagram") return <Instagram className="w-4 h-4" />;
+  if (platform === "instagram") return <Camera className="w-4 h-4" />;
   if (platform === "email") return <Mail className="w-4 h-4" />;
   if (platform === "whatsapp") return <MessageCircle className="w-4 h-4" />;
   return <MessageCircle className="w-4 h-4" />;

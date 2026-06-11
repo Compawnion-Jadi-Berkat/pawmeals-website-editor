@@ -1,5 +1,4 @@
 import type { NextPageContext } from "next";
-
 // Minimal Pages Router error page — required for Next.js internal error handling.
 // All real 404/error UI is handled by app/not-found.tsx and app/[locale]/error.tsx.
 function Error({ statusCode }: { statusCode: number }) {
@@ -12,10 +11,8 @@ function Error({ statusCode }: { statusCode: number }) {
     </div>
   );
 }
-
 Error.getInitialProps = ({ res, err }: NextPageContext) => {
   const statusCode = res ? res.statusCode : err ? (err as { statusCode?: number }).statusCode ?? 500 : 404;
   return { statusCode };
 };
-
 export default Error;

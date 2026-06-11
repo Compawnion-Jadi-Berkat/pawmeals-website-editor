@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Instagram } from "lucide-react";
+import { Camera } from "lucide-react";
 
 interface InstagramPost {
   label?: string;
@@ -30,7 +30,7 @@ export function InstagramFeed({ content }: InstagramFeedProps) {
         <div className="text-center mb-8">
           {content?.handle && (
             <div className="inline-flex items-center gap-2 text-pm-brown/70 mb-3">
-              <Instagram className="w-5 h-5" aria-hidden="true" />
+              <Camera className="w-5 h-5" aria-hidden="true" />
               <span className="font-bold text-body-sm">{content.handle}</span>
             </div>
           )}
@@ -61,7 +61,7 @@ export function InstagramFeed({ content }: InstagramFeedProps) {
         {feedUrl && content?.ctaText && (
           <div className="text-center">
             <Link href={feedUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-2 border-pm-brown/20 text-pm-brown font-bold px-6 py-3 rounded-pill hover:border-pm-caramel hover:text-pm-caramel transition-colors">
-              <Instagram className="w-4 h-4" aria-hidden="true" />
+              <Camera className="w-4 h-4" aria-hidden="true" />
               {content.ctaText}
             </Link>
           </div>
