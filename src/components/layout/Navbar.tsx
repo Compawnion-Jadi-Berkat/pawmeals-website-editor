@@ -50,7 +50,9 @@ export function Navbar({ locale, siteSettings }: NavbarProps) {
   const tagline = siteSettings?.tagline;
   const otherLocale: Locale = locale === "id" ? "en" : "id";
   const safePath = pathname ?? "/";
-  const otherLocalePath = safePath.replace(`/${locale}`, `/${otherLocale}`);
+  // Route through normalizePublicHref so any locale prefix (including a
+  // previously-broken /en/id/... path) is stripped before re-prefixing.
+  const otherLocalePath = normalizePublicHref(safePath, otherLocale);
   const localeShortLabels: Record<Locale, string> = { id: "ID", en: "EN" };
 
   return (

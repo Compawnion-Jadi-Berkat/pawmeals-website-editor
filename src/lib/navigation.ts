@@ -49,8 +49,13 @@ const DEFAULT_FOOTER_LINKS: Record<Locale, SiteFooterLink[]> = {
 };
 
 function stripLocale(path: string, locale: Locale) {
-  if (path === `/${locale}`) return "/";
-  if (path.startsWith(`/${locale}/`)) return path.slice(locale.length + 1) || "/";
+  // Strip ANY known locale prefix, not just the current one. Sanity-authored
+  // hrefs may already include `/id/...` or `/en/...`; without this, switching
+  // locale produces double-prefixed URLs like `/en/id/products` → 404.
+  for (const loc of ["id", "en"] as const) {
+    if (path === `/${loc}`) return "/";
+    if (path.startsWith(`/${loc}/`)) return path.slice(loc.length + 1) || "/";
+  }
   return path;
 }
 
