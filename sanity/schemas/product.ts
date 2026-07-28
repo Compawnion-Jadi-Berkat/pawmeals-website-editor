@@ -55,6 +55,7 @@ export const product = defineType({
     }),
     defineField({ name: "ingredients", title: "Ingredients", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "feedingGuide", title: "Feeding Guide", type: "text", rows: 4 }),
+    defineField({ name: "ctaLabel", title: "CTA Button Label", type: "string", description: "Overrides the default Select / Pilih label on the product card CTA." }),
     defineField({ name: "badges", title: "Product Badges", type: "array", of: [{ type: "string" }], description: "Optional short badges such as Fresh Cooked, Vet Curated, or No Preservatives." }),
     defineField({
       name: "availableLocales",

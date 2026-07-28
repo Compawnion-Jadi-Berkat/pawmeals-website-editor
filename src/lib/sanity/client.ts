@@ -197,10 +197,12 @@ export const HOMEPAGE_QUERY = `
       subheadline,
       ctaText,
       ctaLink,
+      layout,
       image { asset->{ _id, url, metadata { dimensions } }, alt }
     },
     whyPawmeals[] {
       icon,
+      iconImage { asset->{ _id, url }, alt },
       title,
       description
     },
@@ -269,7 +271,14 @@ export const SITE_SETTINGS_QUERY = `
     location,
     vetClinicCount,
     primaryColor,
-    accentColor
+    accentColor,
+    beigeColor,
+    charcoalColor,
+    headingFont,
+    bodyFont,
+    hideFooterWhatsAppBar,
+    navItems[] { label, href, iconImage { asset->{ _id, url }, alt } },
+    socials[] { platform, label, url, iconImage { asset->{ _id, url }, alt } }
   }
 `;
 
@@ -280,6 +289,7 @@ export const PRODUCT_CATEGORIES_QUERY = `
     "slug": slug.current,
     description,
     icon,
+    iconImage { asset->{ _id, url }, alt },
     order
   }
 `;
@@ -294,6 +304,7 @@ export const SANITY_PRODUCTS_QUERY = `
     title,
     "handle": slug.current,
     shortDescription,
+    ctaLabel,
     longDescription,
     featured,
     sortOrder,
@@ -307,6 +318,7 @@ export const SANITY_PRODUCTS_QUERY = `
       "slug": slug.current,
       description,
       icon,
+      iconImage { asset->{ _id, url }, alt },
       order
     },
     images[] {
@@ -327,6 +339,7 @@ export const SANITY_PRODUCT_BY_HANDLE_QUERY = `
     title,
     "handle": slug.current,
     shortDescription,
+    ctaLabel,
     longDescription,
     featured,
     sortOrder,
@@ -340,6 +353,7 @@ export const SANITY_PRODUCT_BY_HANDLE_QUERY = `
       "slug": slug.current,
       description,
       icon,
+      iconImage { asset->{ _id, url }, alt },
       order
     },
     images[] {
@@ -360,6 +374,7 @@ export const FEATURED_SANITY_PRODUCTS_QUERY = `
     title,
     "handle": slug.current,
     shortDescription,
+    ctaLabel,
     longDescription,
     featured,
     sortOrder,
@@ -373,6 +388,7 @@ export const FEATURED_SANITY_PRODUCTS_QUERY = `
       "slug": slug.current,
       description,
       icon,
+      iconImage { asset->{ _id, url }, alt },
       order
     },
     images[] {
@@ -531,6 +547,7 @@ function mapSanityProduct(product: any): WebsiteProduct {
     variants: { edges: [{ node: { id: fallbackVariantId, availableForSale: true } }] },
     vendor: "Pawmeals",
     featured: Boolean(product.featured),
+    ctaLabel: product.ctaLabel || undefined,
   };
 }
 
@@ -763,4 +780,32 @@ export async function getAboutFullContent() {
   if (!isSanityConfigured) return null;
   try { return await sanityClient.fetch(ABOUT_FULL_QUERY); }
   catch (e) { console.warn("[Sanity] getAboutFullContent failed:", e); return null; }
+}
+
+export const PRODUCTS_PAGE_QUERY = `
+  *[
+    _type == "productsPage"
+    && !(_id in path("drafts.**"))
+    && (
+      language == $locale
+      || _id == "productsPage__" + $locale
+      || (!defined(language) && $locale == "id")
+    )
+  ] | order(select(_id == "productsPage__" + $locale => 0, language == $locale => 1, 2))[0] {
+    eyebrow,
+    headline,
+    intro,
+    categoryHeadlines[] { slug, eyebrow, headline, intro }
+  }
+`;
+
+export async function getProductsPageContent(locale: string = "id") {
+  if (!isSanityConfigured) return null;
+  return fetchWithCanonicalFallback<any | null>(
+    PRODUCTS_PAGE_QUERY,
+    { locale },
+    (c) => Boolean(c && (c.headline || c.intro || c.categoryHeadlines?.length)),
+    "getProductsPageContent",
+    null,
+  );
 }

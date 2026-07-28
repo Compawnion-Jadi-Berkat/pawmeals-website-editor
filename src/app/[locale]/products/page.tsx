@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { getProductCategories, getSanityProducts } from "@/lib/sanity/client";
+import { getProductCategories, getProductsPageContent, getSanityProducts } from "@/lib/sanity/client";
 import { ProductsGrid } from "@/components/products/ProductsGrid";
 import { ProductFilters } from "@/components/products/ProductFilters";
 import { BreadcrumbSchema } from "@/components/seo/OrganizationSchema";
@@ -38,10 +38,19 @@ export default async function ProductsPage({
   const { locale } = await params;
   const { type, sort } = await searchParams;
 
-  const [allProducts, categories] = await Promise.all([
+  const [allProducts, categories, pageContent] = await Promise.all([
     getSanityProducts(locale).catch(() => []),
     getProductCategories().catch(() => []),
+    getProductsPageContent(locale).catch(() => null),
   ]);
+
+  const activeCategory = type ? categories.find((c: any) => c.slug === type) : null;
+  const override = type && pageContent?.categoryHeadlines?.find((o: any) => o.slug === type);
+  const eyebrow = override?.eyebrow || pageContent?.eyebrow || (locale === 'id' ? 'Katalog Kurasi' : 'Curated Catalogue');
+  const headline = override?.headline || (activeCategory ? (locale === 'id' ? `Koleksi ${activeCategory.title}` : `${activeCategory.title} Collection`) : (pageContent?.headline || (locale === 'id' ? 'Semua Produk Pawmeals' : 'All Pawmeals Products')));
+  const intro = override?.intro || activeCategory?.description || pageContent?.intro || (locale === 'id'
+    ? 'Pilihan makanan masak alami untuk anjing dan kucing, dikurasi dengan bahan asli, tanpa pengawet, dan diarahkan untuk rutinitas makan yang lebih tenang.'
+    : 'A refined selection of naturally cooked meals for dogs and cats, curated with real ingredients, no preservatives, and a calmer daily feeding ritual.');
 
   // Filter by type
   const filtered = type
@@ -67,15 +76,13 @@ export default async function ProductsPage({
         <div className="container relative py-14 lg:py-18">
           <div className="max-w-3xl">
             <p className="mb-3 inline-flex rounded-full border border-pm-gold/30 bg-white/75 px-4 py-2 text-label-sm font-bold uppercase tracking-[0.24em] text-pm-caramel shadow-soft">
-              {locale === "id" ? "Katalog Kurasi" : "Curated Catalogue"}
+              {eyebrow}
             </p>
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-pm-brown mb-5">
-              {locale === "id" ? "Semua Produk Pawmeals" : "All Pawmeals Products"}
+              {headline}
             </h1>
             <p className="text-pm-brown/72 text-body-lg leading-relaxed max-w-2xl">
-              {locale === "id"
-                ? "Pilihan makanan masak alami untuk anjing dan kucing, dikurasi dengan bahan asli, tanpa pengawet, dan diarahkan untuk rutinitas makan yang lebih tenang."
-                : "A refined selection of naturally cooked meals for dogs and cats, curated with real ingredients, no preservatives, and a calmer daily feeding ritual."}
+              {intro}
             </p>
           </div>
         </div>

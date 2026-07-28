@@ -23,6 +23,7 @@ import { faq }              from "./faq";
 import { author }           from "./author";
 import { productCategory }  from "./productCategory";
 import { product }          from "./product";
+import { productsPage }     from "./productsPage";
 import { quizQuestion }     from "./quizQuestion";
 import { quizResult }       from "./quizResult";
 
@@ -43,6 +44,7 @@ export const schemaTypes = [
   author,
   productCategory,
   product,
+  productsPage,
   quizQuestion,
   quizResult,
 ];

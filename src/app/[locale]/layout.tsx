@@ -128,6 +128,41 @@ export default async function LocaleLayout({
         <link rel="preconnect" href={`https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}`} />
         <link rel="preconnect" href="https://cdn.sanity.io" />
 
+        {/* Editor-driven brand tokens (Site Settings) */}
+        {(() => {
+          const primary = siteSettings?.primaryColor;
+          const accent = siteSettings?.accentColor;
+          const beige = siteSettings?.beigeColor;
+          const charcoal = siteSettings?.charcoalColor;
+          const headingFont = siteSettings?.headingFont;
+          const bodyFont = siteSettings?.bodyFont;
+          const fontsToLoad = Array.from(
+            new Set([headingFont, bodyFont].filter(Boolean).filter((f) => f !== "Varela Round" && f !== "Nunito Sans"))
+          ) as string[];
+          const overrides: string[] = [];
+          if (primary) overrides.push(`--color-primary:${primary};`);
+          if (accent) overrides.push(`--color-accent:${accent};--color-gold:${accent};--color-warning:${accent};`);
+          if (beige) overrides.push(`--color-bg-alt:${beige};`);
+          if (charcoal) overrides.push(`--color-text:${charcoal};--color-bg-inverse:${charcoal};`);
+          if (headingFont && headingFont !== "Varela Round") overrides.push(`--font-display:'${headingFont}', var(--font-heading), system-ui, sans-serif;`);
+          if (bodyFont && bodyFont !== "Nunito Sans") overrides.push(`--font-sans:'${bodyFont}', var(--font-body), system-ui, sans-serif;`);
+          return (
+            <>
+              {fontsToLoad.length > 0 && (
+                <link
+                  rel="stylesheet"
+                  href={`https://fonts.googleapis.com/css2?${fontsToLoad
+                    .map((f) => `family=${encodeURIComponent(f).replace(/%20/g, "+")}:wght@400;500;600;700;800`)
+                    .join("&")}&display=swap`}
+                />
+              )}
+              {overrides.length > 0 && (
+                <style dangerouslySetInnerHTML={{ __html: `:root{${overrides.join("")}}` }} />
+              )}
+            </>
+          );
+        })()}
+
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />

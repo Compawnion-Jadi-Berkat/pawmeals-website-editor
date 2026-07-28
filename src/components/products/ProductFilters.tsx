@@ -36,11 +36,12 @@ export function ProductFilters({ locale, activeType, categories }: ProductFilter
   const router = useRouter();
 
   const filterItems = [
-    { value: "", label: locale === "id" ? "Semua Produk" : "All Products", icon: "all" as IconKey },
+    { value: "", label: locale === "id" ? "Semua Produk" : "All Products", icon: "all" as IconKey, iconImageUrl: undefined as string | undefined },
     ...categories.map((category) => ({
       value: category.slug,
       label: category.title,
       icon: resolveIcon(category.icon),
+      iconImageUrl: category.iconImage?.asset?.url as string | undefined,
     })),
   ];
 
@@ -69,6 +70,7 @@ export function ProductFilters({ locale, activeType, categories }: ProductFilter
         {filterItems.map((cat) => {
           const Icon = iconMap[cat.icon];
           const isActive = (activeType ?? "") === cat.value;
+          const custom = cat.iconImageUrl;
           return (
             <button
               key={cat.value}
@@ -81,8 +83,13 @@ export function ProductFilters({ locale, activeType, categories }: ProductFilter
               }`}
               aria-pressed={isActive}
             >
-              <span className={`w-8 h-8 rounded-xl flex items-center justify-center ${isActive ? "bg-white/15" : "bg-pm-caramel/10 text-pm-caramel"}`}>
-                <Icon className="w-4 h-4" aria-hidden="true" />
+              <span className={`w-8 h-8 rounded-xl flex items-center justify-center overflow-hidden ${isActive ? "bg-white/15" : "bg-pm-caramel/10 text-pm-caramel"}`}>
+                {custom ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={custom} alt="" className="w-5 h-5 object-contain" />
+                ) : (
+                  <Icon className="w-4 h-4" aria-hidden="true" />
+                )}
               </span>
               {cat.label}
             </button>

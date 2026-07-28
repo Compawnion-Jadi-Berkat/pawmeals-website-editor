@@ -1,6 +1,9 @@
+export interface SanityImage { asset?: { url?: string; _id?: string }; alt?: string }
+
 export interface SiteNavItem {
   label: string;
   href: string;
+  iconImage?: SanityImage;
 }
 
 export interface SiteFooterLink extends SiteNavItem {
@@ -8,8 +11,10 @@ export interface SiteFooterLink extends SiteNavItem {
 }
 
 export interface SiteSocialLink {
-  platform?: "instagram" | "tiktok" | "whatsapp" | "email" | string;
+  platform?: "instagram" | "tiktok" | "whatsapp" | "email" | "facebook" | "youtube" | "x" | "custom" | string;
+  label?: string;
   url?: string;
+  iconImage?: SanityImage;
 }
 
 export interface SiteSettingsContent {
@@ -23,8 +28,15 @@ export interface SiteSettingsContent {
   phone?: string;
   location?: string;
   vetClinicCount?: string;
-  defaultOgImage?: { asset?: { url?: string }; alt?: string };
-  logo?: { asset?: { url?: string }; alt?: string };
+  defaultOgImage?: SanityImage;
+  logo?: SanityImage;
+  primaryColor?: string;
+  accentColor?: string;
+  beigeColor?: string;
+  charcoalColor?: string;
+  headingFont?: string;
+  bodyFont?: string;
+  hideFooterWhatsAppBar?: boolean;
 }
 
 export interface ProductCategoryContent {
@@ -33,6 +45,7 @@ export interface ProductCategoryContent {
   slug: string;
   description?: string;
   icon?: string;
+  iconImage?: SanityImage;
   order?: number;
 }
 
@@ -53,4 +66,19 @@ export interface WebsiteProduct {
   variants?: { edges: Array<{ node: { id: string; availableForSale: boolean } }> };
   vendor?: string;
   featured?: boolean;
+  ctaLabel?: string;
+}
+
+export interface ProductsPageCategoryOverride {
+  slug: string;
+  eyebrow?: string;
+  headline: string;
+  intro?: string;
+}
+
+export interface ProductsPageContent {
+  eyebrow?: string;
+  headline?: string;
+  intro?: string;
+  categoryHeadlines?: ProductsPageCategoryOverride[];
 }

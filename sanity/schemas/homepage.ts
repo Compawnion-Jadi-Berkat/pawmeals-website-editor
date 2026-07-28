@@ -18,6 +18,7 @@ export const homepage = defineType({
             defineField({ name: "subheadline", title: "Subheadline", type: "text", rows: 2 }),
             defineField({ name: "ctaText", title: "CTA Button Text", type: "string" }),
             defineField({ name: "ctaLink", title: "CTA Button Link", type: "string", description: "e.g. /id/products" }),
+            defineField({ name: "layout", title: "Slide Layout", type: "string", options: { list: [{ title: "Split (image right)", value: "split" }, { title: "Full-bleed image", value: "fullBleed" }, { title: "Centered text", value: "centered" }] }, initialValue: "split" }),
             defineField({
               name: "image",
               title: "Background Image",
@@ -40,7 +41,8 @@ export const homepage = defineType({
         {
           type: "object",
           fields: [
-            defineField({ name: "icon", title: "Icon (emoji or icon name)", type: "string" }),
+            defineField({ name: "icon", title: "Icon (emoji or lucide name)", type: "string", description: "Optional preset. Icon Upload takes priority if set." }),
+            defineField({ name: "iconImage", title: "Icon Upload (optional)", type: "image", fields: [defineField({ name: "alt", title: "Alt Text", type: "string" })] }),
             defineField({ name: "title", title: "Title", type: "string", validation: (R) => R.required() }),
             defineField({ name: "description", title: "Description", type: "text", rows: 2 }),
           ],

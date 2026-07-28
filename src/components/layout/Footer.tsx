@@ -45,7 +45,7 @@ export function Footer({ locale, siteSettings }: FooterProps) {
 
   return (
     <footer className="bg-pm-brown text-white" role="contentinfo">
-      {whatsappNumber && (
+      {whatsappNumber && !siteSettings?.hideFooterWhatsAppBar && (
         <div className="bg-pm-caramel">
           <div className="container py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p className="text-white font-semibold text-body-md text-center sm:text-left">
@@ -115,7 +115,12 @@ export function Footer({ locale, siteSettings }: FooterProps) {
                     className="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white/70 hover:bg-pm-caramel hover:text-white transition-all duration-200"
                     aria-label={`${brandName} on ${social.platform || "social media"}`}
                   >
-                    {socialIcon(social.platform)}
+                    {social.iconImage?.asset?.url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={social.iconImage.asset.url} alt={social.iconImage.alt || social.label || social.platform || ""} className="w-4 h-4 object-contain" />
+                    ) : (
+                      socialIcon(social.platform)
+                    )}
                   </a>
                 ))}
               </div>

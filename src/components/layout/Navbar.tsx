@@ -38,7 +38,7 @@ export function Navbar({ locale, siteSettings }: NavbarProps) {
   const navItems = useMemo<SiteNavItem[]>(() => {
     const studioNavItems = (siteSettings?.navItems || [])
       .filter((item) => item?.label && item?.href)
-      .map((item) => ({ label: item.label, href: normalizePublicHref(item.href, locale) }));
+      .map((item) => ({ label: item.label, href: normalizePublicHref(item.href, locale), iconImage: item.iconImage }));
 
     return studioNavItems.length > 0 ? prioritizeQuizAfterCatering(studioNavItems) : getFallbackNavItems(locale);
   }, [locale, siteSettings?.navItems]);
@@ -86,7 +86,13 @@ export function Navbar({ locale, siteSettings }: NavbarProps) {
                       isActive ? "text-white bg-pm-brown shadow-warm-sm" : "text-pm-brown hover:text-pm-caramel-dark hover:bg-pm-cream"
                     }`}
                   >
-                    {link.label}
+                    <span className="inline-flex items-center gap-1.5">
+                      {link.iconImage?.asset?.url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={link.iconImage.asset.url} alt="" className="w-4 h-4 object-contain" />
+                      )}
+                      {link.label}
+                    </span>
                   </Link>
                 );
               })}

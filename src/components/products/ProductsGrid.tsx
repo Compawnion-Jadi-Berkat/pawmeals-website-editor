@@ -112,7 +112,7 @@ export function ProductsGrid({ locale, products, sort }: ProductsGridProps) {
                   </div>
                   <span className="inline-flex items-center gap-1.5 bg-pm-brown text-white text-body-sm font-bold px-4 py-2.5 rounded-pill group-hover:bg-pm-caramel-dark transition-colors">
                     <ShoppingBag className="w-4 h-4" aria-hidden="true" />
-                    {locale === "id" ? "Pilih" : "Select"}
+                    {product.ctaLabel || (locale === "id" ? "Pilih" : "Select")}
                     <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
                   </span>
                 </div>
